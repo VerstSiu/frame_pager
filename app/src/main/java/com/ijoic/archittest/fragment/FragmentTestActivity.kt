@@ -54,6 +54,11 @@ class FragmentTestActivity : AppCompatActivity() {
       adapter = this@FragmentTestActivity.adapter
     }
     navigation.setOnNavigationItemSelectedListener({ onTabSelectedChanged(it.itemId) })
+
+    if (savedInstanceState == null) {
+      // initialize pager position when savedInstanceState is empty
+      onTabSelectedChanged(navigation.selectedItemId)
+    }
   }
 
   private fun onTabSelectedChanged(@IdRes id: Int): Boolean {
@@ -72,5 +77,13 @@ class FragmentTestActivity : AppCompatActivity() {
       }
       else -> false
     }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle?) {
+    super.onSaveInstanceState(outState)
+  }
+
+  override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+    super.onRestoreInstanceState(savedInstanceState)
   }
 }

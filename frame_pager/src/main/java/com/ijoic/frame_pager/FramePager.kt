@@ -23,6 +23,7 @@ import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentTransaction
 
 /**
  * Frame pager.
@@ -30,10 +31,12 @@ import android.support.v4.app.FragmentManager
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class FramePager(private val pagerName: String = ""): LifecycleObserver {
+class FramePager(pagerName: String = ""): LifecycleObserver {
 
   private var frameId = 0
   private var manager: FragmentManager? = null
+
+  private val itemTagPrefix = "frame_pager:$pagerName:"
 
   /**
    * Initialize.
@@ -45,7 +48,6 @@ class FramePager(private val pagerName: String = ""): LifecycleObserver {
   fun init(lifecycle: Lifecycle, @IdRes frameId: Int, manager: FragmentManager) {
     this.frameId = frameId
     this.manager = manager
-    restoreFragmentItems()
     lifecycle.addObserver(this)
   }
 
@@ -111,12 +113,14 @@ class FramePager(private val pagerName: String = ""): LifecycleObserver {
     val lastFragment = this.lastFragment
     this.lastFragment = null
 
-    // hide last fragment
-    lastFragment?.let { transaction.hide(it) }
-
     val adapter = this.adapter ?: return
     val itemKey = adapter.getItemKey(position)
     val itemTag = makeFragmentTag(itemKey)
+
+    if (!restoreFragmentItems(itemTag, transaction)) {
+      // hide last fragment
+      lastFragment?.let { transaction.hide(it) }
+    }
 
     // show or create new fragment
     var fragment = manager.findFragmentByTag(itemTag)
@@ -158,10 +162,33 @@ class FramePager(private val pagerName: String = ""): LifecycleObserver {
     transaction.commitNowAllowingStateLoss()
   }
 
+  private var restoreComplete = false
+
   /**
    * Restore fragment items.
+   *
+   * @param itemTag current item tag.
+   * @param transaction fragment transaction.
    */
-  private fun restoreFragmentItems() {
+  private fun restoreFragmentItems(itemTag: String, transaction: FragmentTransaction): Boolean {
+    if (restoreComplete) {
+      return false
+    }
+    restoreComplete = true
+    val manager = this.manager ?: return false
+    val fragments = manager.fragments
+
+    if (fragments == null || fragments.isEmpty()) {
+      return false
+    }
+    fragments.forEach {
+      val tag = it.tag
+
+      if (tag != null && tag != itemTag && tag.startsWith(itemTagPrefix)) {
+        transaction.hide(it)
+      }
+    }
+    return true
   }
 
   private fun popOutCacheFragmentItems(): List<Fragment> {
@@ -194,6 +221,6 @@ class FramePager(private val pagerName: String = ""): LifecycleObserver {
     }
   }
 
-  private fun makeFragmentTag(itemKey: String) = "frame_pager:$pagerName:$itemKey"
+  private fun makeFragmentTag(itemKey: String) = "$itemTagPrefix$itemKey"
 
 }
