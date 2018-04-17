@@ -17,15 +17,18 @@
  */
 package com.ijoic.archittest.base.fragment
 
-import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ijoic.archittest.R
+import com.ijoic.archittest.base.util.ArgumentSource
+import com.ijoic.archittest.base.util.bindArgsInt
 import kotlinx.android.synthetic.main.fragment_simple_color.*
 
 /**
@@ -34,12 +37,14 @@ import kotlinx.android.synthetic.main.fragment_simple_color.*
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class ColorFragment: Fragment() {
+class ColorFragment: Fragment(), ArgumentSource {
 
   /**
    * Color.
    */
-  val color = MutableLiveData<Int>()
+  var color by bindArgsInt("color", Color.WHITE)
+
+  private var model: ColorViewModel? = null
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return inflater.inflate(R.layout.fragment_simple_color, container, false)
@@ -47,6 +52,19 @@ class ColorFragment: Fragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    color.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
+    Log.e("color_fragment", "[$this] fragment created, color: $color")
+
+    if (this.model == null) {
+      val model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
+      model.pageColor.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
+
+      model.pageColor.value = color
+      this.model = model
+    }
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    this.model = null
   }
 }

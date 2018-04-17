@@ -17,6 +17,9 @@
  */
 package com.ijoic.frame_pager
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.OnLifecycleEvent
 import android.support.annotation.IdRes
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -27,9 +30,35 @@ import android.support.v4.app.FragmentManager
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class FramePager(
-    @IdRes private val frameId: Int,
-    private val manager: FragmentManager) {
+class FramePager(private val pagerName: String = ""): LifecycleObserver {
+
+  private var frameId = 0
+  private var manager: FragmentManager? = null
+
+  /**
+   * Initialize.
+   *
+   * @param lifecycle lifecycle.
+   * @param frameId frame id.
+   * @param manager fragment manager.
+   */
+  fun init(lifecycle: Lifecycle, @IdRes frameId: Int, manager: FragmentManager) {
+    this.frameId = frameId
+    this.manager = manager
+    restoreFragmentItems()
+    lifecycle.addObserver(this)
+  }
+
+  /**
+   * Destroy.
+   */
+  @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+  internal fun onDestroy() {
+    this.adapter = null
+    this.manager = null
+    this.frameId = 0
+    destroyCacheFragmentItems()
+  }
 
   /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> adapter :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
 
@@ -59,18 +88,112 @@ class FramePager(
 
   /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> adapter :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
 
+  private var lastItemPosition = -1
+  private var lastFragment: Fragment? = null
+
+  private val cacheFragmentItems = ArrayList<Fragment>()
+
   /**
    * Set current display item.
    *
    * @param position item position.
    */
   fun setCurrentItem(position: Int) {
-    adapter?.let {
-      manager
-          .beginTransaction()
-          .replace(frameId, it.createItemInstance(position))
-          .commit()
+    val manager = this.manager ?: return
+    val frameId = this.frameId
+
+    if (lastItemPosition == position) {
+      return
+    }
+    lastItemPosition = position
+
+    val transaction = manager.beginTransaction()
+    val lastFragment = this.lastFragment
+    this.lastFragment = null
+
+    // hide last fragment
+    lastFragment?.let { transaction.hide(it) }
+
+    val adapter = this.adapter ?: return
+    val itemKey = adapter.getItemKey(position)
+    val itemTag = makeFragmentTag(itemKey)
+
+    // show or create new fragment
+    var fragment = manager.findFragmentByTag(itemTag)
+
+    if (fragment != null) {
+      // This fragment may comes from manager cache.
+      transaction
+          .show(fragment)
+          .commitNowAllowingStateLoss()
+
+      if (!isFragmentItemCached(fragment)) {
+        addFragmentItemToCache(fragment)
+      }
+
+    } else {
+      fragment = adapter.createItemInstance(position)
+      transaction
+          .add(frameId, fragment, itemTag)
+          .commitNowAllowingStateLoss()
+
+      addFragmentItemToCache(fragment)
+    }
+
+    // upgrade last fragment
+    this.lastFragment = fragment
+  }
+
+  /**
+   * Destroy cached fragment items.
+   */
+  private fun destroyCacheFragmentItems() {
+    val manager = this.manager ?: return
+    val items = popOutCacheFragmentItems()
+    val transaction = manager.beginTransaction()
+
+    items.forEach {
+      transaction.detach(it)
+    }
+    transaction.commitNowAllowingStateLoss()
+  }
+
+  /**
+   * Restore fragment items.
+   */
+  private fun restoreFragmentItems() {
+  }
+
+  private fun popOutCacheFragmentItems(): List<Fragment> {
+    synchronized(cacheFragmentItems) {
+      val popResult = cacheFragmentItems.toMutableList()
+      cacheFragmentItems.clear()
+      return popResult
     }
   }
+
+  /**
+   * Returns fragment item cached status.
+   *
+   * @param fragment fragment item.
+   */
+  private fun isFragmentItemCached(fragment: Fragment): Boolean {
+    synchronized(cacheFragmentItems) {
+      return cacheFragmentItems.contains(fragment)
+    }
+  }
+
+  /**
+   * Add fragment item to cache.
+   *
+   * @param fragment fragment item.
+   */
+  private fun addFragmentItemToCache(fragment: Fragment) {
+    synchronized(cacheFragmentItems) {
+      cacheFragmentItems.add(fragment)
+    }
+  }
+
+  private fun makeFragmentTag(itemKey: String) = "frame_pager:$pagerName:$itemKey"
 
 }

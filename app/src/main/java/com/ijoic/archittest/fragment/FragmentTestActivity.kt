@@ -34,16 +34,14 @@ import kotlinx.android.synthetic.main.activity_fragment_test.*
  */
 class FragmentTestActivity : AppCompatActivity() {
 
-  private var framePager: FramePager? = null
+  private val framePager = FramePager()
   private val adapter = object : FramePager.Adapter {
     private val colors = arrayOf(Color.GRAY, Color.CYAN, Color.RED, Color.BLUE)
 
-    override fun getItemKey(position: Int): String {
-      TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getItemKey(position: Int) = "$position"
 
     override fun createItemInstance(position: Int) = ColorFragment().apply {
-      color.value = colors[Math.abs(position) % colors.size]
+      color = colors[Math.abs(position) % colors.size]
     }
   }
 
@@ -51,7 +49,8 @@ class FragmentTestActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_fragment_test)
 
-    framePager = FramePager(R.id.page_content_frame, supportFragmentManager).apply {
+    framePager.apply {
+      init(lifecycle, R.id.page_content_frame, supportFragmentManager)
       adapter = this@FragmentTestActivity.adapter
     }
     navigation.setOnNavigationItemSelectedListener({ onTabSelectedChanged(it.itemId) })
@@ -60,15 +59,15 @@ class FragmentTestActivity : AppCompatActivity() {
   private fun onTabSelectedChanged(@IdRes id: Int): Boolean {
     return when (id) {
       R.id.navigation_home -> {
-        framePager?.setCurrentItem(0)
+        framePager.setCurrentItem(0)
         true
       }
       R.id.navigation_dashboard -> {
-        framePager?.setCurrentItem(1)
+        framePager.setCurrentItem(1)
         true
       }
       R.id.navigation_notifications -> {
-        framePager?.setCurrentItem(2)
+        framePager.setCurrentItem(2)
         true
       }
       else -> false
