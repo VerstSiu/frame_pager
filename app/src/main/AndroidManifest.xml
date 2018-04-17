@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.ijoic.archittest">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.ijoic.archittest">
 
   <application
     android:name=".TestApplication"
@@ -22,13 +21,16 @@
     </activity>
 
     <!-- fragment test -->
-    <activity android:name=".fragment.FragmentTestActivity">
+    <activity
+      android:name=".fragment.FragmentTestActivity"
+      android:label="@string/title_activity_pager_test">
       <intent-filter>
         <action android:name="${applicationId}.fragment_test"/>
 
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>
     </activity>
+
   </application>
 
 </manifest>

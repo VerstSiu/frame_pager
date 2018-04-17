@@ -17,9 +17,14 @@
  */
 package com.ijoic.archittest.fragment
 
+import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.FragmentActivity
+import android.support.annotation.IdRes
+import android.support.v7.app.AppCompatActivity
 import com.ijoic.archittest.R
+import com.ijoic.archittest.base.fragment.ColorFragment
+import com.ijoic.frame_pager.FramePager
+import kotlinx.android.synthetic.main.activity_fragment_test.*
 
 /**
  * Fragment test activity.
@@ -27,11 +32,46 @@ import com.ijoic.archittest.R
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class FragmentTestActivity: FragmentActivity() {
+class FragmentTestActivity : AppCompatActivity() {
+
+  private var framePager: FramePager? = null
+  private val adapter = object : FramePager.Adapter {
+    private val colors = arrayOf(Color.GRAY, Color.CYAN, Color.RED, Color.BLUE)
+
+    override fun getItemKey(position: Int): String {
+      TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createItemInstance(position: Int) = ColorFragment().apply {
+      color.value = colors[Math.abs(position) % colors.size]
+    }
+  }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_fragment_test)
+
+    framePager = FramePager(R.id.page_content_frame, supportFragmentManager).apply {
+      adapter = this@FragmentTestActivity.adapter
+    }
+    navigation.setOnNavigationItemSelectedListener({ onTabSelectedChanged(it.itemId) })
   }
 
+  private fun onTabSelectedChanged(@IdRes id: Int): Boolean {
+    return when (id) {
+      R.id.navigation_home -> {
+        framePager?.setCurrentItem(0)
+        true
+      }
+      R.id.navigation_dashboard -> {
+        framePager?.setCurrentItem(1)
+        true
+      }
+      R.id.navigation_notifications -> {
+        framePager?.setCurrentItem(2)
+        true
+      }
+      else -> false
+    }
+  }
 }

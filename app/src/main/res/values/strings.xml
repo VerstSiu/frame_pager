@@ -3,5 +3,9 @@
   <string name="app_name">Archit Test</string>
 
   <string name="fragment_test">Fragment Test</string>
+  <string name="title_activity_pager_test">Pager Test</string>
+  <string name="title_home">Home</string>
+  <string name="title_dashboard">Dashboard</string>
+  <string name="title_notifications">Notifications</string>
 
 </resources>
