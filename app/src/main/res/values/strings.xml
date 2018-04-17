@@ -1,3 +1,7 @@
 <resources>
+
   <string name="app_name">Archit Test</string>
+
+  <string name="fragment_test">Fragment Test</string>
+
 </resources>

@@ -15,27 +15,21 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.archittest
+package com.ijoic.archittest.fragment.base.constants
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import com.ijoic.archittest.base.util.routeTo
-import com.ijoic.archittest.fragment.base.constants.FragmentTestActions
-import kotlinx.android.synthetic.main.activity_main.*
+import com.ijoic.archittest.base.content.TestActions
+import com.ijoic.archittest.base.content.bindAction
 
 /**
- * Main activity.
+ * Fragment test actions.
  *
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class MainActivity : AppCompatActivity() {
+object FragmentTestActions: TestActions("fragment_test") {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-
-    action_fragment_test.setOnClickListener { routeTo(FragmentTestActions.main) }
-  }
-
+  /**
+   * Main.
+   */
+  val main by bindAction(null)
 }

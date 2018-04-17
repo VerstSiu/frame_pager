@@ -15,27 +15,23 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.archittest
+package com.ijoic.archittest.base.util
 
-import android.support.v7.app.AppCompatActivity
-import android.os.Bundle
-import com.ijoic.archittest.base.util.routeTo
-import com.ijoic.archittest.fragment.base.constants.FragmentTestActions
-import kotlinx.android.synthetic.main.activity_main.*
+import android.content.Context
+import android.content.Intent
 
 /**
- * Main activity.
+ * Context extension.
  *
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class MainActivity : AppCompatActivity() {
 
-  override fun onCreate(savedInstanceState: Bundle?) {
-    super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
-
-    action_fragment_test.setOnClickListener { routeTo(FragmentTestActions.main) }
-  }
-
+/**
+ * Route to specific action activity.
+ *
+ * @param action action.
+ */
+fun Context.routeTo(action: String) {
+  startActivity(Intent(action))
 }
