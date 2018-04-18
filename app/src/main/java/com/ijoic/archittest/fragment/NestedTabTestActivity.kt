@@ -15,28 +15,31 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.archittest
+package com.ijoic.archittest.fragment
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.ijoic.archittest.base.util.routeTo
-import com.ijoic.archittest.fragment.base.constants.FragmentTestActions
-import kotlinx.android.synthetic.main.activity_main.*
+import android.support.v7.app.AppCompatActivity
+import com.ijoic.archittest.R
+import com.ijoic.archittest.base.fragment.nested_tab.NestedTabFragment
 
 /**
- * Main activity.
+ * Nested tab test activity.
  *
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class MainActivity : AppCompatActivity() {
+class NestedTabTestActivity : AppCompatActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    setContentView(R.layout.activity_main)
+    setContentView(R.layout.activity_simple_frame)
 
-    action_fragment_test.setOnClickListener { routeTo(FragmentTestActions.tabTest) }
-    action_nested_fragment_test.setOnClickListener { routeTo(FragmentTestActions.nestedTabTest) }
+    if (savedInstanceState == null) {
+      supportFragmentManager
+          .beginTransaction()
+          .replace(R.id.root_page_frame, NestedTabFragment())
+          .commit()
+    }
   }
 
 }

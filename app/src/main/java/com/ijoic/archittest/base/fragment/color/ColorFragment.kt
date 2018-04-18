@@ -28,6 +28,7 @@ import com.ijoic.archittest.R
 import com.ijoic.archittest.base.fragment.StateFragment
 import com.ijoic.archittest.base.util.ArgumentSource
 import com.ijoic.archittest.base.util.bindArgsInt
+import com.ijoic.archittest.base.util.bindArgsString
 import kotlinx.android.synthetic.main.fragment_simple_color.*
 
 /**
@@ -42,6 +43,11 @@ class ColorFragment: StateFragment(), ArgumentSource {
    * Color.
    */
   var color by bindArgsInt("color", Color.WHITE)
+
+  /**
+   * Color text.
+   */
+  var colorText by bindArgsString("color_text", "")
 
   private var model: ColorViewModel? = null
 
@@ -67,6 +73,9 @@ class ColorFragment: StateFragment(), ArgumentSource {
   }
 
   override fun toString(): String {
-    return "color: $color"
+    return when {
+      colorText.isEmpty() -> "color: $color"
+      else -> "color: $colorText($color)"
+    }
   }
 }

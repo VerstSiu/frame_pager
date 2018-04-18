@@ -25,7 +25,18 @@
       android:name=".fragment.TabTestActivity"
       android:label="@string/title_activity_pager_test">
       <intent-filter>
-        <action android:name="${applicationId}.fragment_test"/>
+        <action android:name="${applicationId}.fragment_test.tab_test"/>
+
+        <category android:name="android.intent.category.DEFAULT"/>
+      </intent-filter>
+    </activity>
+
+    <!-- nested fragment test -->
+    <activity
+      android:name=".fragment.NestedTabTestActivity"
+      android:label="@string/title_activity_pager_test">
+      <intent-filter>
+        <action android:name="${applicationId}.fragment_test.nested_tab_test"/>
 
         <category android:name="android.intent.category.DEFAULT"/>
       </intent-filter>

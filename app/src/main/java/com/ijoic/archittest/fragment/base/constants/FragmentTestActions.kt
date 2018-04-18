@@ -29,7 +29,12 @@ import com.ijoic.archittest.base.content.bindAction
 object FragmentTestActions: TestActions("fragment_test") {
 
   /**
-   * Main.
+   * Tab test.
    */
-  val main by bindAction(null)
+  val tabTest by bindAction("tab_test")
+
+  /**
+   * Nested tab test.
+   */
+  val nestedTabTest by bindAction("nested_tab_test")
 }
