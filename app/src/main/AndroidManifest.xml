@@ -22,7 +22,7 @@
 
     <!-- fragment test -->
     <activity
-      android:name=".fragment.FragmentTestActivity"
+      android:name=".fragment.TabTestActivity"
       android:label="@string/title_activity_pager_test">
       <intent-filter>
         <action android:name="${applicationId}.fragment_test"/>

@@ -15,22 +15,31 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.archittest.base.fragment
+package com.ijoic.archittest.fragment
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
+import com.ijoic.archittest.R
+import com.ijoic.archittest.base.fragment.tab.TabFragment
 
 /**
- * Color view model.
+ * Tab test activity.
  *
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class ColorViewModel: ViewModel() {
+class TabTestActivity : AppCompatActivity() {
 
-  /**
-   * Page color.
-   */
-  val pageColor by lazy { MutableLiveData<Int>() }
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_simple_frame)
+
+    if (savedInstanceState == null) {
+      supportFragmentManager
+          .beginTransaction()
+          .replace(R.id.root_page_frame, TabFragment())
+          .commit()
+    }
+  }
 
 }

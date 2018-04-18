@@ -29,24 +29,48 @@ import kotlin.reflect.KProperty
  */
 
 /**
+ * Bind arguments int field.
+ *
+ * @param field field name.
+ * @param defValue default value.
+ */
+fun bindArgsInt(field: String, defValue: Int = 0): ReadWriteProperty<ArgumentSource, Int> = ArgsProperty(
+    { it.getInt(field, defValue) },
+    { args, value -> args.putInt(field, value) },
+    defValue
+)
+
+/**
  * Bind arguments string field.
  *
  * @param field field name.
  * @param defValue default value.
  */
-fun ArgumentSource.bindArgsInt(field: String, defValue: Int = 0): ReadWriteProperty<ArgumentSource, Int> = object : ReadWriteProperty<ArgumentSource, Int> {
+fun bindArgsString(field: String, defValue: String = ""): ReadWriteProperty<ArgumentSource, String> = ArgsProperty(
+    { it.getString(field) ?: defValue },
+    { args, value -> args.putString(field, value) },
+    defValue
+)
+
+/**
+ * Arguments property.
+ */
+private class ArgsProperty<T>(
+    private val getter: (Bundle) -> T,
+    private val setter: (Bundle, T) -> Unit,
+    private val defValue: T): ReadWriteProperty<ArgumentSource, T> {
 
   private var argsInit = false
   private var insideValue = defValue
 
-  override fun getValue(thisRef: ArgumentSource, property: KProperty<*>): Int {
+  override fun getValue(thisRef: ArgumentSource, property: KProperty<*>): T {
     if (!argsInit) {
-      return thisRef.getArguments()?.getInt(field, defValue) ?: defValue
+      return thisRef.getArguments()?.let { getter(it) } ?: defValue
     }
     return insideValue
   }
 
-  override fun setValue(thisRef: ArgumentSource, property: KProperty<*>, value: Int) {
+  override fun setValue(thisRef: ArgumentSource, property: KProperty<*>, value: T) {
     insideValue = value
     argsInit = true
 
@@ -55,7 +79,7 @@ fun ArgumentSource.bindArgsInt(field: String, defValue: Int = 0): ReadWritePrope
       args = Bundle()
       thisRef.setArguments(args)
     }
-    args.putInt(field, value)
+    setter(args, value)
   }
 
 }

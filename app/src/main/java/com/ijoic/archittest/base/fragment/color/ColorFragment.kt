@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.archittest.base.fragment
+package com.ijoic.archittest.base.fragment.color
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -25,6 +25,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.ijoic.archittest.R
+import com.ijoic.archittest.base.fragment.StateFragment
 import com.ijoic.archittest.base.util.ArgumentSource
 import com.ijoic.archittest.base.util.bindArgsInt
 import kotlinx.android.synthetic.main.fragment_simple_color.*
