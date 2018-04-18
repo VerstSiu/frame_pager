@@ -21,8 +21,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +35,7 @@ import kotlinx.android.synthetic.main.fragment_simple_color.*
  * @author verstsiu@126.com on 2018/4/17.
  * @version 1.0
  */
-class ColorFragment: Fragment(), ArgumentSource {
+class ColorFragment: StateFragment(), ArgumentSource {
 
   /**
    * Color.
@@ -52,7 +50,6 @@ class ColorFragment: Fragment(), ArgumentSource {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    Log.e("color_fragment", "[$this] fragment created, color: $color")
 
     if (this.model == null) {
       val model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
@@ -66,5 +63,9 @@ class ColorFragment: Fragment(), ArgumentSource {
   override fun onDestroy() {
     super.onDestroy()
     this.model = null
+  }
+
+  override fun toString(): String {
+    return "color: $color"
   }
 }
