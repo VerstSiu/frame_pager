@@ -81,11 +81,9 @@ class FragmentTestActivity : AppCompatActivity() {
 
   override fun onSaveInstanceState(outState: Bundle?) {
     super.onSaveInstanceState(outState)
-    framePager.savedInstanceState(outState)
   }
 
   override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
     super.onRestoreInstanceState(savedInstanceState)
-    framePager.restoreInstanceState(savedInstanceState)
   }
 }
