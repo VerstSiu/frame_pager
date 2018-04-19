@@ -49,30 +49,14 @@ class ColorFragment: StateFragment(), ArgumentSource {
    */
   var colorText by bindArgsString("color_text", "")
 
-  private var model: ColorViewModel? = null
-
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateInstantView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return inflater.inflate(R.layout.fragment_simple_color, container, false)
   }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    var model = this.model
-
-    if (model == null) {
-      model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
-      model.pageColor.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
-
-      this.model = model
-    }
-    if (savedInstanceState == null) {
-      model.pageColor.value = color
-    }
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    this.model = null
+  override fun onInitInstantView(savedInstanceState: Bundle?) {
+    val model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
+    model.pageColor.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
+    model.pageColor.value = color
   }
 
   override fun toString(): String {

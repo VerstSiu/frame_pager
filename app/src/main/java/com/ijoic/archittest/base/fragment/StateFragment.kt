@@ -18,8 +18,8 @@
 package com.ijoic.archittest.base.fragment
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.util.Log
+import com.ijoic.frame_pager.InstantFragment
 
 /**
  * State fragment.
@@ -27,7 +27,7 @@ import android.util.Log
  * @author verstsiu@126.com on 2018/4/18.
  * @version 1.0
  */
-open class StateFragment: Fragment() {
+open class StateFragment: InstantFragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)

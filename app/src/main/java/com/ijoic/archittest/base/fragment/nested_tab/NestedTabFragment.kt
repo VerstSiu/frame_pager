@@ -62,12 +62,11 @@ class NestedTabFragment: StateFragment(), ArgumentSource {
     override fun createItemInstance(position: Int) = items.getOrNull(position) ?: StateFragment()
   }
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+  override fun onCreateInstantView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return inflater.inflate(R.layout.fragment_simple_tab, container, false)
   }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
+  override fun onInitInstantView(savedInstanceState: Bundle?) {
 
     framePager.apply {
       init(lifecycle, R.id.tab_page_frame, childFragmentManager)
