@@ -57,13 +57,16 @@ class ColorFragment: StateFragment(), ArgumentSource {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
+    var model = this.model
 
-    if (this.model == null) {
-      val model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
+    if (model == null) {
+      model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
       model.pageColor.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
 
-      model.pageColor.value = color
       this.model = model
+    }
+    if (savedInstanceState == null) {
+      model.pageColor.value = color
     }
   }
 

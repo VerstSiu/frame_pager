@@ -93,8 +93,9 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> adapter :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
 
   private var lastItemPosition = -1
+  private var lastFragment: Fragment? = null
 
-  private val cacheFragmentItems = HashMap<String, Fragment>()
+  private val cacheFragmentItems = ArrayList<Fragment>()
 
   /**
    * Set current display item.
@@ -110,38 +111,32 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     }
     lastItemPosition = position
 
+    val transaction = manager.beginTransaction()
+    val lastFragment = this.lastFragment
+    this.lastFragment = null
+
+    lastFragment?.let { transaction.detach(it) }
+
     val adapter = this.adapter ?: return
     val itemKey = adapter.getItemKey(position)
     val itemTag = makeFragmentTag(itemKey)
 
     // show or create new fragment
-    val fragment = getFragmentInstance(manager, adapter, position, itemTag)
-
-    manager
-        .beginTransaction()
-        .replace(frameId, fragment, itemTag)
-        .commitNowAllowingStateLoss()
-  }
-
-  /**
-   * Returns fragment instance.
-   */
-  private fun getFragmentInstance(manager: FragmentManager, adapter: Adapter, position: Int, itemTag: String): Fragment {
-    val fragment = manager.findFragmentByTag(itemTag)
+    var fragment = manager.findFragmentByTag(itemTag)
 
     if (fragment != null) {
-      return fragment
-    }
-    synchronized(cacheFragmentItems) {
-      val cachedFragment = cacheFragmentItems[itemTag]
+      transaction.attach(fragment)
 
-      if (cachedFragment != null) {
-        return cachedFragment
+    } else {
+      fragment = adapter.createItemInstance(position)
+      transaction.add(frameId, fragment, itemTag)
+
+      synchronized(cacheFragmentItems) {
+        cacheFragmentItems.add(fragment)
       }
-      val newFragment = adapter.createItemInstance(position)
-      cacheFragmentItems[itemTag] = newFragment
-      return newFragment
     }
+    transaction.commitNowAllowingStateLoss()
+    this.lastFragment = fragment
   }
 
   private fun makeFragmentTag(itemKey: String) = "$itemTagPrefix$itemKey"
