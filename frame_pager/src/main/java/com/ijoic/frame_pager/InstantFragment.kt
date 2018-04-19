@@ -29,52 +29,22 @@ import android.view.ViewGroup
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-open class InstantFragment: Fragment() {
+abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
 
-  private var cachedView: View? = null
-  private var viewInit = false
+  private val delegate = InstantDelegate(this)
 
-  final override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    var contentView = this.cachedView
-
-    if (contentView == null) {
-      contentView = onCreateInstantView(inflater, container, savedInstanceState)
-      this.cachedView = contentView
-    }
-    return contentView
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    return delegate.onCreateView(inflater, container, savedInstanceState)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-
-    if (!viewInit) {
-      viewInit = true
-      onInitInstantView(savedInstanceState)
-    }
+    delegate.onActivityCreated(savedInstanceState)
   }
 
   override fun onDestroy() {
-    viewInit = false
-    cachedView = null
+    delegate.onDestroy()
     super.onDestroy()
   }
 
-  /**
-   * Create instant view.
-   *
-   * @param inflater layout inflater.
-   * @param container container.
-   * @param savedInstanceState saved instance state.
-   */
-  protected open fun onCreateInstantView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    return super.onCreateView(inflater, container, savedInstanceState)
-  }
-
-  /**
-   * Initialize instant view.
-   *
-   * @param savedInstanceState saved instance state.
-   */
-  protected open fun onInitInstantView(savedInstanceState: Bundle?) {
-  }
 }
