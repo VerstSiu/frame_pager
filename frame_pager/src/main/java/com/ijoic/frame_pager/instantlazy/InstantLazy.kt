@@ -15,55 +15,24 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.frame_pager.lazy
+package com.ijoic.frame_pager.instantlazy
+
+import com.ijoic.frame_pager.instant.InstantDelegate
+import com.ijoic.frame_pager.instant.InstantDelegateImpl
+import com.ijoic.frame_pager.lazy.LazyDelegate
+import com.ijoic.frame_pager.lazy.LazyDelegateImpl
 
 /**
- * lazy delegate.
+ * Instant lazy.
  *
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-interface LazyDelegate {
-  /**
-   * Lazy callback.
-   */
-  interface Callback {
-    /**
-     * Returns user visible status.
-     */
-    fun getUserVisibleHint(): Boolean
-
-    /**
-     * Returns resume status.
-     */
-    fun isResumed(): Boolean
-
-    /**
-     * Lazy resume.
-     */
-    fun onLazyResume() {}
-
-    /**
-     * Lazy pause.
-     */
-    fun onLazyPause() {}
-  }
+class InstantLazy(callback: Callback): InstantDelegate by InstantDelegateImpl(callback), LazyDelegate by LazyDelegateImpl(callback) {
 
   /**
-   * Resume.
+   * Instant lazy callback.
    */
-  fun onResume()
-
-  /**
-   * Pause.
-   */
-  fun onPause()
-
-  /**
-   * Set user visible hint.
-   *
-   * @param isVisibleToUser visible status.
-   */
-  fun setUserVisibleHint(isVisibleToUser: Boolean)
+  interface Callback: InstantDelegate.Callback, LazyDelegate.Callback
 
 }
