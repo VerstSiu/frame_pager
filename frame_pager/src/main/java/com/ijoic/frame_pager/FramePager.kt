@@ -109,7 +109,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     val frameId = this.frameId
 
     if (lastItemPosition == position) {
-      return null
+      return getCachedFragmentInstance(manager, position)
     }
     lastItemPosition = position
 
@@ -140,6 +140,20 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     transaction.commitNowAllowingStateLoss()
     this.lastFragment = fragment
     return fragment
+  }
+
+  /**
+   * Returns cached fragment instance.
+   *
+   * @param manager fragment manager.
+   * @param position item position.
+   */
+  private fun getCachedFragmentInstance(manager: FragmentManager, position: Int): Fragment? {
+    val adapter = this.adapter ?: return null
+    val itemKey = adapter.getItemKey(position)
+    val itemTag = makeFragmentTag(itemKey)
+
+    return manager.findFragmentByTag(itemTag)
   }
 
   private fun makeFragmentTag(itemKey: String) = "$itemTagPrefix$itemKey"
