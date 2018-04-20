@@ -1,4 +1,4 @@
-package com.ijoic.frame_pager
+package com.ijoic.frame_pager.lazy
 
 import java.lang.ref.WeakReference
 

@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.frame_pager
+package com.ijoic.frame_pager.instant
 
 import android.os.Bundle
 import android.view.LayoutInflater

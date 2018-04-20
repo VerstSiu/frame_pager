@@ -19,7 +19,7 @@ package com.ijoic.archittest.base.fragment
 
 import android.os.Bundle
 import android.util.Log
-import com.ijoic.frame_pager.InstantFragment
+import com.ijoic.frame_pager.instant.InstantFragment
 
 /**
  * State fragment.

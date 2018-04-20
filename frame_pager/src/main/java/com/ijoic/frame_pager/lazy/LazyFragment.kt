@@ -15,7 +15,7 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.frame_pager
+package com.ijoic.frame_pager.lazy
 
 import android.support.v4.app.Fragment
 
