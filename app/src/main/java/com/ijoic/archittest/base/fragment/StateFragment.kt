@@ -27,7 +27,7 @@ import com.ijoic.frame_pager.InstantFragment
  * @author verstsiu@126.com on 2018/4/18.
  * @version 1.0
  */
-open class StateFragment: InstantFragment() {
+abstract class StateFragment: InstantFragment() {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)

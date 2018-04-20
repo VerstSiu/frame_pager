@@ -59,7 +59,7 @@ class NestedTabFragment: StateFragment(), ArgumentSource {
 
     override fun getItemKey(position: Int) = "$position"
 
-    override fun createItemInstance(position: Int) = items.getOrNull(position) ?: StateFragment()
+    override fun createItemInstance(position: Int) = items.getOrNull(position) ?: Fragment()
   }
 
   override fun onCreateInstantView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
