@@ -131,10 +131,9 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     val lastFragment = this.lastFragment
     this.lastFragment = null
 
-    lastFragment?.let {
-      transaction.hide(it)
-      it.setMenuVisibility(false)
-      it.userVisibleHint = false
+    if (lastFragment != null) {
+      transaction.hide(lastFragment)
+      lastFragment.tag?.let { toggleFragmentVisibleState(lastFragment, it, false) }
     }
 
     val adapter = this.adapter ?: return null
@@ -148,8 +147,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
       if (fragment.isDetached) {
         transaction.attach(fragment)
       }
-      fragment.setMenuVisibility(true)
-      fragment.userVisibleHint = true
+      toggleFragmentVisibleState(fragment, itemTag, true)
       transaction.show(fragment)
 
     } else {
@@ -176,5 +174,75 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   }
 
   private fun makeFragmentTag(itemKey: String) = "$itemTagPrefix$itemKey"
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> fragment state :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
+
+  /**
+   * Toggle fragment visible state.
+   *
+   * <p>Toggle current and current child fragments' visible status.</p>
+   *
+   * @param fragment fragment.
+   * @param itemTag item tag.
+   * @param visible visible.
+   */
+  private fun toggleFragmentVisibleState(fragment: Fragment, itemTag: String, visible: Boolean) {
+    fragment.setMenuVisibility(visible)
+    fragment.userVisibleHint = visible
+    val manager = fragment.childFragmentManager
+    val childItems = manager.fragments ?: return
+
+    if (visible) {
+      val resumeItems = popResumeChildItems(itemTag)
+
+      resumeItems?.forEach {
+        it.setMenuVisibility(true)
+        it.userVisibleHint = true
+      }
+    } else {
+      val resumeItems = childItems.filter { it.userVisibleHint }
+
+      resumeItems.forEach {
+        it.setMenuVisibility(false)
+        it.userVisibleHint = false
+      }
+      if (!resumeItems.isEmpty()) {
+        pushResumeChildItems(itemTag, resumeItems)
+      }
+    }
+  }
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> fragment state :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> resume child :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
+
+  private val resumeChildItems = HashMap<String, List<Fragment>>()
+
+  /**
+   * Push resume child items.
+   *
+   * @param itemTag item tag.
+   * @param items items.
+   */
+  private fun pushResumeChildItems(itemTag: String, items: List<Fragment>) {
+    synchronized(resumeChildItems) {
+      resumeChildItems[itemTag] = items
+    }
+  }
+
+  /**
+   * Pop resume child items.
+   *
+   * @param itemTag item tag.
+   */
+  private fun popResumeChildItems(itemTag: String): List<Fragment>? {
+    synchronized(resumeChildItems) {
+      val items = resumeChildItems[itemTag]
+      resumeChildItems.remove(itemTag)
+      return items
+    }
+  }
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> resume child :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
 
 }
