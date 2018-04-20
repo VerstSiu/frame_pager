@@ -31,7 +31,7 @@ import android.view.ViewGroup
  */
 abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
 
-  private val delegate = InstantDelegate(this)
+  private val delegate by lazy { InstantDelegate(this) }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return delegate.onCreateView(inflater, container, savedInstanceState)
