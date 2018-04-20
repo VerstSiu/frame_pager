@@ -75,7 +75,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
      *
      * @param position item position.
      */
-    fun getItemKey(position: Int): String
+    fun getItemKey(position: Int) = "adapter_$position"
 
     /**
      * Returns new created item instance.
