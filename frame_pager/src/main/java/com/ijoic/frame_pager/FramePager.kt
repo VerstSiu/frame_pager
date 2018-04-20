@@ -50,6 +50,26 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     lifecycle.addObserver(this)
   }
 
+  @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+  internal fun onStop() {
+    val manager = this.manager ?: return
+    val fragments = manager.fragments?.toMutableList() ?: return
+    val lastFragment = this.lastFragment
+
+    if (fragments.size > 1) {
+      val transaction = manager.beginTransaction()
+
+      fragments.forEach {
+        val itemTag = it.tag
+
+        if (it != lastFragment && itemTag != null && itemTag.startsWith(itemTagPrefix)) {
+          transaction.detach(it)
+        }
+      }
+      transaction.commitNowAllowingStateLoss()
+    }
+  }
+
   /**
    * Destroy.
    */
@@ -58,10 +78,6 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     this.adapter = null
     this.manager = null
     this.frameId = 0
-
-    synchronized(cacheFragmentItems) {
-      cacheFragmentItems.clear()
-    }
   }
 
   /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> adapter :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
@@ -95,8 +111,6 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   private var lastItemPosition = -1
   private var lastFragment: Fragment? = null
 
-  private val cacheFragmentItems = ArrayList<Fragment>()
-
   /**
    * Set current display item.
    *
@@ -117,7 +131,11 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     val lastFragment = this.lastFragment
     this.lastFragment = null
 
-    lastFragment?.let { transaction.detach(it) }
+    lastFragment?.let {
+      transaction.hide(it)
+      it.setMenuVisibility(false)
+      it.userVisibleHint = false
+    }
 
     val adapter = this.adapter ?: return null
     val itemKey = adapter.getItemKey(position)
@@ -127,15 +145,16 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     var fragment = manager.findFragmentByTag(itemTag)
 
     if (fragment != null) {
-      transaction.attach(fragment)
+      if (fragment.isDetached) {
+        transaction.attach(fragment)
+      }
+      fragment.setMenuVisibility(true)
+      fragment.userVisibleHint = true
+      transaction.show(fragment)
 
     } else {
       fragment = adapter.createItemInstance(position)
       transaction.add(frameId, fragment, itemTag)
-
-      synchronized(cacheFragmentItems) {
-        cacheFragmentItems.add(fragment)
-      }
     }
     transaction.commitNowAllowingStateLoss()
     this.lastFragment = fragment
