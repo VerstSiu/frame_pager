@@ -27,7 +27,7 @@ import android.support.v4.app.Fragment
  */
 abstract class LazyFragment: Fragment(), LazyDelegate.Callback {
 
-  private val delegate by lazy { LazyDelegate(this) }
+  private val delegate by lazy { LazyDelegateImpl(this) }
 
   override fun onResume() {
     super.onResume()

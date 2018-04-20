@@ -18,33 +18,44 @@
 package com.ijoic.frame_pager.instant
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import java.lang.ref.WeakReference
 
 /**
- * Instant fragment.
+ * Instant delegate impl.
  *
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
+class InstantDelegateImpl(callback: InstantDelegate.Callback): InstantDelegate {
 
-  private val delegate by lazy { InstantDelegateImpl(this) }
+  private val refCallback = WeakReference(callback)
+
+  private var cachedView: View? = null
+  private var viewInit = false
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    return delegate.onCreateView(inflater, container, savedInstanceState)
+    var contentView = this.cachedView
+
+    if (contentView == null) {
+      contentView = refCallback.get()?.onCreateInstantView(inflater, container, savedInstanceState)
+      this.cachedView = contentView
+    }
+    return contentView
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
-    delegate.onActivityCreated(savedInstanceState)
+    if (!viewInit) {
+      viewInit = true
+      refCallback.get()?.onInitInstantView(savedInstanceState)
+    }
   }
 
   override fun onDestroy() {
-    delegate.onDestroy()
-    super.onDestroy()
+    viewInit = false
+    cachedView = null
   }
 
 }
