@@ -99,18 +99,20 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   /**
    * Set current display item.
    *
+   * <p>Returns current display fragment item or null.</p>
+   *
    * @param position item position.
    */
-  fun setCurrentItem(position: Int) {
-    val manager = this.manager ?: return
+  fun setCurrentItem(position: Int): Fragment? {
+    val manager = this.manager ?: return null
     val frameId = this.frameId
 
     if (lastItemPosition == position) {
-      return
+      return null
     }
     lastItemPosition = position
 
-    val adapter = this.adapter ?: return
+    val adapter = this.adapter ?: return null
     val itemKey = adapter.getItemKey(position)
     val itemTag = makeFragmentTag(itemKey)
 
@@ -121,6 +123,8 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
         .beginTransaction()
         .replace(frameId, fragment, itemTag)
         .commitNowAllowingStateLoss()
+
+    return fragment
   }
 
   /**
