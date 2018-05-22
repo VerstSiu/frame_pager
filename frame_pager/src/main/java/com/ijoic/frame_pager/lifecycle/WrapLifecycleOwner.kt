@@ -15,32 +15,22 @@
  *  limitations under the License.
  *
  */
-package com.ijoic.frame_pager.lazy
+package com.ijoic.frame_pager.lifecycle
+
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleOwner
+import android.arch.lifecycle.LifecycleRegistry
 
 /**
- * Lazy delegate(lifecycle).
+ * Wrap lifecycle owner.
  *
  * @author verstsiu on 2018/5/22.
  * @version 1.0
  */
-interface LazyDelegateLive: LazyDelegate, LazyLifecycleOwner {
-  /**
-   * Create.
-   */
-  fun onCreate()
+class WrapLifecycleOwner: LifecycleOwner {
+  private val lifecycle by lazy { LifecycleRegistry(this) }
 
-  /**
-   * Start.
-   */
-  fun onStart()
-
-  /**
-   * Stop.
-   */
-  fun onStop()
-
-  /**
-   * Destroy.
-   */
-  fun onDestroy()
+  override fun getLifecycle(): Lifecycle {
+    return lifecycle
+  }
 }

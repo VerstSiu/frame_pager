@@ -18,6 +18,7 @@
 package com.ijoic.frame_pager.lazy
 
 import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.LifecycleRegistry
 import java.lang.ref.WeakReference
 
@@ -30,12 +31,21 @@ import java.lang.ref.WeakReference
 class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
 
   private val refCallback = WeakReference(callback)
-  private val lifecycle = LifecycleRegistry(this)
+  private val lifecycleOwner = WrapLifecycleOwner()
+  private val lifecycle = lifecycleOwner.lifecycle
+
+  private class WrapLifecycleOwner: LifecycleOwner {
+    private val registry = LifecycleRegistry(this)
+
+    override fun getLifecycle() = registry
+  }
 
   private var lazyResumeInit = false
   private var lazyPauseInit = false
 
-  override fun getLifecycle() = lifecycle
+  override val lazyOwner: LifecycleOwner
+    get() = lifecycleOwner
+
   override fun onCreate() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
   override fun onStart() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
   override fun onStop() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)

@@ -27,11 +27,12 @@ import android.support.v4.app.Fragment
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LifecycleOwner {
+abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LazyLifecycleOwner {
 
   private val delegate by lazy { LazyDelegateImpl(this) }
 
-  override fun getLifecycle() = delegate.lifecycle
+  override val lazyOwner: LifecycleOwner
+    get() = delegate.lazyOwner
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)

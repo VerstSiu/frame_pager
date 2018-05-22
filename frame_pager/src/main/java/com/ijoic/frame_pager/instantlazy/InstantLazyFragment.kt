@@ -17,11 +17,13 @@
  */
 package com.ijoic.frame_pager.instantlazy
 
+import android.arch.lifecycle.LifecycleOwner
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.ijoic.frame_pager.lazy.LazyLifecycleOwner
 
 /**
  * Instant lazy fragment.
@@ -29,11 +31,12 @@ import android.view.ViewGroup
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback {
+abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecycleOwner {
 
   private val delegate by lazy { InstantLazy(this) }
 
-  override fun getLifecycle() = delegate.lifecycle
+  override val lazyOwner: LifecycleOwner
+    get() = delegate.lazyOwner
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return delegate.onCreateView(inflater, container, savedInstanceState)
