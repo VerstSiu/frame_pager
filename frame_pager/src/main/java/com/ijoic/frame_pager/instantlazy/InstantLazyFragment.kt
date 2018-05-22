@@ -33,6 +33,12 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback {
 
   private val delegate by lazy { InstantLazy(this) }
 
+  init {
+    delegate.onInit()
+  }
+
+  override fun getLifecycle() = delegate.lifecycle
+
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return delegate.onCreateView(inflater, container, savedInstanceState)
   }
@@ -40,6 +46,17 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback {
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
     delegate.onActivityCreated(savedInstanceState)
+    delegate.onCreate()
+  }
+
+  override fun onStart() {
+    super.onStart()
+    delegate.onStart()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    delegate.onStop()
   }
 
   override fun onDestroy() {

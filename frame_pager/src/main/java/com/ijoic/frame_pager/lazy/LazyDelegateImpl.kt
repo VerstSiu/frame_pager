@@ -17,6 +17,8 @@
  */
 package com.ijoic.frame_pager.lazy
 
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleRegistry
 import java.lang.ref.WeakReference
 
 /**
@@ -25,12 +27,20 @@ import java.lang.ref.WeakReference
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegate {
+class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
 
   private val refCallback = WeakReference(callback)
+  private val lifecycle = LifecycleRegistry(this)
 
   private var lazyResumeInit = false
   private var lazyPauseInit = false
+
+  override fun getLifecycle() = lifecycle
+  override fun onInit() = lifecycle.markState(Lifecycle.State.INITIALIZED)
+  override fun onCreate() = lifecycle.markState(Lifecycle.State.CREATED)
+  override fun onStart() = lifecycle.markState(Lifecycle.State.STARTED)
+  override fun onStop() = lifecycle.markState(Lifecycle.State.CREATED)
+  override fun onDestroy() = lifecycle.markState(Lifecycle.State.DESTROYED)
 
   override fun onResume() {
     val callback = refCallback.get() ?: return
@@ -38,7 +48,7 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegate {
 
     if (callback.getUserVisibleHint() && !lazyResumeInit) {
       lazyResumeInit = true
-      callback.onLazyResume()
+      performLazyResume(callback)
     }
   }
 
@@ -48,7 +58,7 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegate {
 
     if (callback.getUserVisibleHint() && !lazyPauseInit) {
       lazyPauseInit = true
-      callback.onLazyPause()
+      performLazyPause(callback)
     }
   }
 
@@ -63,16 +73,26 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegate {
 
       if (!lazyPauseInit) {
         lazyResumeInit = true
-        callback.onLazyResume()
+        performLazyResume(callback)
       }
     } else {
       lazyResumeInit = false
 
       if (!lazyPauseInit) {
         lazyPauseInit = true
-        callback.onLazyPause()
+        performLazyPause(callback)
       }
     }
+  }
+
+  private fun performLazyResume(callback: LazyDelegate.Callback) {
+    callback.onLazyResume()
+    lifecycle.markState(Lifecycle.State.RESUMED)
+  }
+
+  private fun performLazyPause(callback: LazyDelegate.Callback) {
+    callback.onLazyPause()
+    lifecycle.markState(Lifecycle.State.STARTED)
   }
 
 }

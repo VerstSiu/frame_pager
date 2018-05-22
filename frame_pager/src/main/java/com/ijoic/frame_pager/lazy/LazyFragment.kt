@@ -17,6 +17,8 @@
  */
 package com.ijoic.frame_pager.lazy
 
+import android.arch.lifecycle.LifecycleOwner
+import android.os.Bundle
 import android.support.v4.app.Fragment
 
 /**
@@ -25,9 +27,35 @@ import android.support.v4.app.Fragment
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-abstract class LazyFragment: Fragment(), LazyDelegate.Callback {
+abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LifecycleOwner {
 
   private val delegate by lazy { LazyDelegateImpl(this) }
+
+  init {
+    delegate.onInit()
+  }
+
+  override fun getLifecycle() = delegate.lifecycle
+
+  override fun onActivityCreated(savedInstanceState: Bundle?) {
+    super.onActivityCreated(savedInstanceState)
+    delegate.onCreate()
+  }
+
+  override fun onStart() {
+    super.onStart()
+    delegate.onStart()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    delegate.onStop()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    delegate.onDestroy()
+  }
 
   override fun onResume() {
     super.onResume()
