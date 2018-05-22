@@ -1,13 +1,38 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext {
+        kotlin_version = '1.2.30'
+        support_version = '27.1.1'
+        lifecycle_version = '1.1.1'
+
+        compileSdkVersion = 27
+        minSdkVersion = 16
+        targetSdkVersion = 23
+        versionCode = 1
+        versionName = "1.0"
+
+        depend_support_appCompatV7 = "com.android.support:appcompat-v7:$support_version"
+        depend_support_v4 = "com.android.support:support-v4:$support_version"
+        depend_support_design = "com.android.support:design:$support_version"
+        depend_support_constraintLayout = 'com.android.support.constraint:constraint-layout:1.1.0'
+        depend_support_vectorDrawable = "com.android.support:support-vector-drawable:$support_version"
+
+        depend_arch_lifecycle = "android.arch.lifecycle:extensions:$lifecycle_version"
+        compiler_arch_lifecycle = "android.arch.lifecycle:compiler:$lifecycle_version"
+
+        depend_kotlin = "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+        depend_junit = 'junit:junit:4.12'
+        depend_test_runner = 'com.android.support.test:runner:1.0.2'
+        depend_test_espresso = 'com.android.support.test.espresso:espresso-core:3.0.2'
+    }
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         // NOTE: Do not place your application dependencies here; they belong
