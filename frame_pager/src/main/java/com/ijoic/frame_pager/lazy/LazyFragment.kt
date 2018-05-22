@@ -31,10 +31,6 @@ abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LifecycleOwner {
 
   private val delegate by lazy { LazyDelegateImpl(this) }
 
-  init {
-    delegate.onInit()
-  }
-
   override fun getLifecycle() = delegate.lifecycle
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -48,13 +44,13 @@ abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LifecycleOwner {
   }
 
   override fun onStop() {
-    super.onStop()
     delegate.onStop()
+    super.onStop()
   }
 
   override fun onDestroy() {
-    super.onDestroy()
     delegate.onDestroy()
+    super.onDestroy()
   }
 
   override fun onResume() {

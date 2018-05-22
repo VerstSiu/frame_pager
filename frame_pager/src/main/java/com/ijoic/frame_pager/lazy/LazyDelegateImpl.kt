@@ -36,11 +36,10 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
   private var lazyPauseInit = false
 
   override fun getLifecycle() = lifecycle
-  override fun onInit() = lifecycle.markState(Lifecycle.State.INITIALIZED)
-  override fun onCreate() = lifecycle.markState(Lifecycle.State.CREATED)
-  override fun onStart() = lifecycle.markState(Lifecycle.State.STARTED)
-  override fun onStop() = lifecycle.markState(Lifecycle.State.CREATED)
-  override fun onDestroy() = lifecycle.markState(Lifecycle.State.DESTROYED)
+  override fun onCreate() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
+  override fun onStart() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
+  override fun onStop() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+  override fun onDestroy() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
 
   override fun onResume() {
     val callback = refCallback.get() ?: return
@@ -87,12 +86,12 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
 
   private fun performLazyResume(callback: LazyDelegate.Callback) {
     callback.onLazyResume()
-    lifecycle.markState(Lifecycle.State.RESUMED)
+    lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
   }
 
   private fun performLazyPause(callback: LazyDelegate.Callback) {
+    lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     callback.onLazyPause()
-    lifecycle.markState(Lifecycle.State.STARTED)
   }
 
 }

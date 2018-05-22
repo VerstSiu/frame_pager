@@ -27,11 +27,6 @@ import android.arch.lifecycle.LifecycleOwner
  */
 interface LazyDelegateLive: LazyDelegate, LifecycleOwner {
   /**
-   * Initialized.
-   */
-  fun onInit()
-
-  /**
    * Create.
    */
   fun onCreate()
