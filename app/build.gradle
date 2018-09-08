@@ -3,13 +3,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion project.compileSdkVersion
+
     defaultConfig {
         applicationId "com.ijoic.archittest"
-        minSdkVersion 15
-        targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion project.minSdkVersion
+        targetSdkVersion project.targetSdkVersion
+        versionCode project.versionCode
+        versionName project.versionName
+
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -23,16 +25,17 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    implementation 'com.android.support:design:27.1.1'
-    implementation 'com.android.support:support-vector-drawable:27.1.1'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    implementation project(':frame_pager')
 
-    // ViewModel and LiveData
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    testImplementation project.depend_junit
+    androidTestImplementation project.depend_test_runner
+    androidTestImplementation project.depend_test_espresso
+
+    implementation project.depend_support_appCompatV7
+    implementation project.depend_support_design
+    implementation project.depend_support_constraintLayout
+    implementation project.depend_support_vectorDrawable
+    implementation project.depend_kotlin
+    implementation project.depend_arch_lifecycle
+
+    implementation project(':frame_pager')
 }

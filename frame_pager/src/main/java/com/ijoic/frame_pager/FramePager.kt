@@ -50,6 +50,26 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     lifecycle.addObserver(this)
   }
 
+  @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+  internal fun onStop() {
+    val manager = this.manager ?: return
+    val fragments = manager.fragments?.toMutableList() ?: return
+    val lastFragment = this.lastFragment
+
+    if (fragments.size > 1) {
+      val transaction = manager.beginTransaction()
+
+      fragments.forEach {
+        val itemTag = it.tag
+
+        if (it != lastFragment && itemTag != null && itemTag.startsWith(itemTagPrefix)) {
+          transaction.detach(it)
+        }
+      }
+      transaction.commitNowAllowingStateLoss()
+    }
+  }
+
   /**
    * Destroy.
    */
@@ -58,10 +78,6 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     this.adapter = null
     this.manager = null
     this.frameId = 0
-
-    synchronized(cacheFragmentItems) {
-      cacheFragmentItems.clear()
-    }
   }
 
   /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> adapter :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
@@ -93,8 +109,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> adapter :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
 
   private var lastItemPosition = -1
-
-  private val cacheFragmentItems = HashMap<String, Fragment>()
+  private var lastFragment: Fragment? = null
 
   /**
    * Set current display item.
@@ -112,18 +127,35 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     }
     lastItemPosition = position
 
+    val transaction = manager.beginTransaction()
+    val lastFragment = this.lastFragment
+    this.lastFragment = null
+
+    if (lastFragment != null) {
+      transaction.hide(lastFragment)
+      lastFragment.tag?.let { toggleFragmentVisibleState(lastFragment, it, false) }
+    }
+
     val adapter = this.adapter ?: return null
     val itemKey = adapter.getItemKey(position)
     val itemTag = makeFragmentTag(itemKey)
 
     // show or create new fragment
-    val fragment = getFragmentInstance(manager, adapter, position, itemTag)
+    var fragment = manager.findFragmentByTag(itemTag)
 
-    manager
-        .beginTransaction()
-        .replace(frameId, fragment, itemTag)
-        .commitNowAllowingStateLoss()
+    if (fragment != null) {
+      if (fragment.isDetached) {
+        transaction.attach(fragment)
+      }
+      toggleFragmentVisibleState(fragment, itemTag, true)
+      transaction.show(fragment)
 
+    } else {
+      fragment = adapter.createItemInstance(position)
+      transaction.add(frameId, fragment, itemTag)
+    }
+    transaction.commitNowAllowingStateLoss()
+    this.lastFragment = fragment
     return fragment
   }
 
@@ -141,27 +173,76 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     return manager.findFragmentByTag(itemTag)
   }
 
+  private fun makeFragmentTag(itemKey: String) = "$itemTagPrefix$itemKey"
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> fragment state :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
+
   /**
-   * Returns fragment instance.
+   * Toggle fragment visible state.
+   *
+   * <p>Toggle current and current child fragments' visible status.</p>
+   *
+   * @param fragment fragment.
+   * @param itemTag item tag.
+   * @param visible visible.
    */
-  private fun getFragmentInstance(manager: FragmentManager, adapter: Adapter, position: Int, itemTag: String): Fragment {
-    val fragment = manager.findFragmentByTag(itemTag)
+  private fun toggleFragmentVisibleState(fragment: Fragment, itemTag: String, visible: Boolean) {
+    fragment.setMenuVisibility(visible)
+    fragment.userVisibleHint = visible
+    val manager = fragment.childFragmentManager
+    val childItems = manager.fragments ?: return
 
-    if (fragment != null) {
-      return fragment
-    }
-    synchronized(cacheFragmentItems) {
-      val cachedFragment = cacheFragmentItems[itemTag]
+    if (visible) {
+      val resumeItems = popResumeChildItems(itemTag)
 
-      if (cachedFragment != null) {
-        return cachedFragment
+      resumeItems?.forEach {
+        it.setMenuVisibility(true)
+        it.userVisibleHint = true
       }
-      val newFragment = adapter.createItemInstance(position)
-      cacheFragmentItems[itemTag] = newFragment
-      return newFragment
+    } else {
+      val resumeItems = childItems.filter { it.userVisibleHint }
+
+      resumeItems.forEach {
+        it.setMenuVisibility(false)
+        it.userVisibleHint = false
+      }
+      if (!resumeItems.isEmpty()) {
+        pushResumeChildItems(itemTag, resumeItems)
+      }
     }
   }
 
-  private fun makeFragmentTag(itemKey: String) = "$itemTagPrefix$itemKey"
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> fragment state :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> resume child :start <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
+
+  private val resumeChildItems = HashMap<String, List<Fragment>>()
+
+  /**
+   * Push resume child items.
+   *
+   * @param itemTag item tag.
+   * @param items items.
+   */
+  private fun pushResumeChildItems(itemTag: String, items: List<Fragment>) {
+    synchronized(resumeChildItems) {
+      resumeChildItems[itemTag] = items
+    }
+  }
+
+  /**
+   * Pop resume child items.
+   *
+   * @param itemTag item tag.
+   */
+  private fun popResumeChildItems(itemTag: String): List<Fragment>? {
+    synchronized(resumeChildItems) {
+      val items = resumeChildItems[itemTag]
+      resumeChildItems.remove(itemTag)
+      return items
+    }
+  }
+
+  /* <>-<>-<>-<>-<>-<>-<>-<>-<>-<> resume child :end <>-<>-<>-<>-<>-<>-<>-<>-<>-<> */
 
 }
