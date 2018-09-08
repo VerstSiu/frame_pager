@@ -1,7 +1,7 @@
-# Archit Test
+# Frame Pager
 
-Android architecture test project.
-    
+Android frame pager fragment manager.
+
 ## License
 
 ```
