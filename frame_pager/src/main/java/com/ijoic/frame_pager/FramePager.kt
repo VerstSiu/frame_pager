@@ -162,6 +162,17 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   /**
    * Returns cached fragment instance.
    *
+   * @param position item position.
+   */
+  fun cachedFragment(position: Int): Fragment? {
+    val manager = this.manager ?: return null
+
+    return getCachedFragmentInstance(manager, position)
+  }
+
+  /**
+   * Returns cached fragment instance.
+   *
    * @param manager fragment manager.
    * @param position item position.
    */
