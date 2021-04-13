@@ -17,14 +17,14 @@
  */
 package com.ijoic.archittest.base.fragment.nested_tab
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.ijoic.archittest.R
 import com.ijoic.archittest.base.fragment.StateFragment
 import com.ijoic.archittest.base.fragment.color.ColorFragment
@@ -43,6 +43,8 @@ import kotlinx.android.synthetic.main.fragment_simple_tab.*
  * @version 1.0
  */
 class NestedTabFragment: StateFragment(), ArgumentSource {
+
+  private val viewModel: TabViewModel by viewModels()
 
   /**
    * Page name.
@@ -72,20 +74,18 @@ class NestedTabFragment: StateFragment(), ArgumentSource {
       init(lifecycle, R.id.tab_page_frame, childFragmentManager)
       adapter = this@NestedTabFragment.adapter
     }
-    val model = ViewModelProviders.of(this).get(TabViewModel::class.java)
-
-    model.selectedPosition.observe(this, Observer { framePager.setCurrentItem(it ?: TabPosition.HOME) })
-    model.homeSelected.observe(this, Observer { tab_item_home.isSelected = it == true })
-    model.dashboardSelected.observe(this, Observer { tab_item_dashboard.isSelected = it == true })
-    model.notificationsSelected.observe(this, Observer { tab_item_notifications.isSelected = it == true })
+    viewModel.selectedPosition.observe(this, Observer { framePager.setCurrentItem(it ?: TabPosition.HOME) })
+    viewModel.homeSelected.observe(this, Observer { tab_item_home.isSelected = it == true })
+    viewModel.dashboardSelected.observe(this, Observer { tab_item_dashboard.isSelected = it == true })
+    viewModel.notificationsSelected.observe(this, Observer { tab_item_notifications.isSelected = it == true })
 
     if (savedInstanceState == null) {
-      model.selectedPosition.value = 0
+      viewModel.selectedPosition.value = 0
     }
 
-    tab_item_home.setOnClickListener { model.selectedPosition.value = TabPosition.HOME }
-    tab_item_dashboard.setOnClickListener { model.selectedPosition.value = TabPosition.DASHBOARD }
-    tab_item_notifications.setOnClickListener { model.selectedPosition.value = TabPosition.NOTIFICATIONS }
+    tab_item_home.setOnClickListener { viewModel.selectedPosition.value = TabPosition.HOME }
+    tab_item_dashboard.setOnClickListener { viewModel.selectedPosition.value = TabPosition.DASHBOARD }
+    tab_item_notifications.setOnClickListener { viewModel.selectedPosition.value = TabPosition.NOTIFICATIONS }
   }
 
   override fun toString(): String {

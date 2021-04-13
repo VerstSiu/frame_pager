@@ -1,6 +1,6 @@
 package com.ijoic.frame_pager.lazy
 
-import android.arch.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleOwner
 
 /**
  * Lazy lifecycle owner.

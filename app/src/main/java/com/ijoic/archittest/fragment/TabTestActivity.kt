@@ -18,7 +18,7 @@
 package com.ijoic.archittest.fragment
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import com.ijoic.archittest.R
 import com.ijoic.archittest.base.fragment.tab.TabFragment
 

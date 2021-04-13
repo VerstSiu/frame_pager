@@ -3,6 +3,12 @@
 /local.properties
 /.idea
 .DS_Store
-/build
+build
 /captures
 .externalNativeBuild
+
+/.idea/*.xml
+.name
+
+node_modules/
+package-lock.json

@@ -17,8 +17,8 @@
  */
 package com.ijoic.archittest
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.ijoic.archittest.base.util.routeTo
 import com.ijoic.archittest.fragment.base.constants.FragmentTestActions
 import kotlinx.android.synthetic.main.activity_main.*

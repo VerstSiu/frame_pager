@@ -17,8 +17,8 @@
  */
 package com.ijoic.archittest.base.util
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.Transformations
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Transformations
 
 /**
  * Live data extension.

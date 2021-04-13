@@ -17,13 +17,13 @@
  */
 package com.ijoic.archittest.base.fragment.color
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.ijoic.archittest.R
 import com.ijoic.archittest.base.fragment.StateFragment
 import com.ijoic.archittest.base.util.ArgumentSource
@@ -38,6 +38,8 @@ import kotlinx.android.synthetic.main.fragment_simple_color.*
  * @version 1.0
  */
 class ColorFragment: StateFragment(), ArgumentSource {
+
+  private val viewModel: ColorViewModel by viewModels()
 
   /**
    * Color.
@@ -54,9 +56,8 @@ class ColorFragment: StateFragment(), ArgumentSource {
   }
 
   override fun onInitInstantView(savedInstanceState: Bundle?) {
-    val model = ViewModelProviders.of(this).get(ColorViewModel::class.java)
-    model.pageColor.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
-    model.pageColor.value = color
+    viewModel.pageColor.observe(this, Observer { page_content.setBackgroundColor(it ?: Color.WHITE) })
+    viewModel.pageColor.value = color
   }
 
   override fun toString(): String {

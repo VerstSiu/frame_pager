@@ -17,9 +17,9 @@
  */
 package com.ijoic.archittest.base.fragment.tab
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.ijoic.archittest.base.fragment.tab.constants.TabPosition
 import com.ijoic.archittest.base.util.map
 
@@ -33,7 +33,7 @@ class TabViewModel: ViewModel() {
 
   val selectedPosition by lazy { MutableLiveData<Int>() }
 
-  val homeSelected: LiveData<Boolean> by lazy { selectedPosition.map { it == null || TabPosition.filterDisplayPosition(it) == TabPosition.HOME } }
+  val homeSelected: LiveData<Boolean> = selectedPosition.map { it == null || TabPosition.filterDisplayPosition(it) == TabPosition.HOME }
   val dashboardSelected: LiveData<Boolean> by lazy { selectedPosition.map { it == TabPosition.DASHBOARD } }
   val notificationsSelected: LiveData<Boolean> by lazy { selectedPosition.map { it == TabPosition.NOTIFICATIONS } }
 
