@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2-alpha.5](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.4...1.1.2-alpha.5) (2021-04-15)
+
+
+### 代码重构
+
+* 移除 InstantView 的 onPause/onResume 方法 ([fa8632c](https://github.com/VerstSiu/frame_pagercommit/fa8632c45c863ec685240d3cb093e8d5ab7282b4))
+
 ### [1.1.2-alpha.4](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.3...1.1.2-alpha.4) (2021-04-15)
 
 
