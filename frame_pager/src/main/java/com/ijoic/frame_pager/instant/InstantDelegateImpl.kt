@@ -65,6 +65,7 @@ class InstantDelegateImpl: InstantDelegate {
 
     if (!viewInit) {
       viewInit = true
+      callback.onInitInstantView(savedInstanceState)
       rootImpl = callback.onPrepareInstantViewImpl()?.also {
         val view = rootView
         if (view != null) {
@@ -72,7 +73,6 @@ class InstantDelegateImpl: InstantDelegate {
           it.onActivityCreated(view, lifecycle, owner)
         }
       }
-      callback.onInitInstantView(savedInstanceState)
       InstantManager.add(this)
     }
   }
