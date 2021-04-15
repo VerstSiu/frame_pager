@@ -53,7 +53,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
   @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
   internal fun onStop() {
     val manager = this.manager ?: return
-    val fragments = manager.fragments?.toMutableList() ?: return
+    val fragments = manager.fragments.toMutableList()
     val lastFragment = this.lastFragment
 
     if (fragments.size > 1) {
@@ -201,7 +201,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
     fragment.setMenuVisibility(visible)
     fragment.userVisibleHint = visible
     val manager = fragment.childFragmentManager
-    val childItems = manager.fragments ?: return
+    val childItems = manager.fragments
 
     if (visible) {
       val resumeItems = popResumeChildItems(itemTag)
@@ -217,7 +217,7 @@ class FramePager(pagerName: String = ""): LifecycleObserver {
         it.setMenuVisibility(false)
         it.userVisibleHint = false
       }
-      if (!resumeItems.isEmpty()) {
+      if (resumeItems.isNotEmpty()) {
         pushResumeChildItems(itemTag, resumeItems)
       }
     }

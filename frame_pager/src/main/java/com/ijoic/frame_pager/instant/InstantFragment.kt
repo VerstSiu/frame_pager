@@ -29,9 +29,9 @@ import androidx.fragment.app.Fragment
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
-
-  private val delegate by lazy { InstantDelegateImpl(this) }
+abstract class InstantFragment(
+  private val delegate: InstantDelegate = InstantDelegateImpl()
+): Fragment(), InstantDelegate.Callback, InstantHost by delegate {
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return delegate.onCreateView(inflater, container, savedInstanceState)
@@ -39,7 +39,22 @@ abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    delegate.onActivityCreated(savedInstanceState)
+    delegate.onActivityCreated(this, savedInstanceState)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    delegate.onResume()
+  }
+
+  override fun onPause() {
+    super.onPause()
+    delegate.onPause()
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    delegate.onDestroyView()
   }
 
   override fun onDestroy() {

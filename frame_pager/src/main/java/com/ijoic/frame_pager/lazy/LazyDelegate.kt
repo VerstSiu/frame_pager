@@ -25,19 +25,11 @@ package com.ijoic.frame_pager.lazy
  */
 interface LazyDelegate {
   /**
-   * Lazy callback.
+   * Callback simple
+   *
+   * @since 1.1.2
    */
-  interface Callback {
-    /**
-     * Returns user visible status.
-     */
-    fun getUserVisibleHint(): Boolean
-
-    /**
-     * Returns resume status.
-     */
-    fun isResumed(): Boolean
-
+  interface CallbackSimple {
     /**
      * Lazy resume.
      */
@@ -47,6 +39,21 @@ interface LazyDelegate {
      * Lazy pause.
      */
     fun onLazyPause() {}
+  }
+
+  /**
+   * Lazy callback.
+   */
+  interface Callback : CallbackSimple {
+    /**
+     * Returns user visible status.
+     */
+    fun getUserVisibleHint(): Boolean
+
+    /**
+     * Returns resume status.
+     */
+    fun isResumed(): Boolean
   }
 
   /**

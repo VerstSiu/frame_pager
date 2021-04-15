@@ -21,6 +21,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.OnLifecycleEvent
 import java.lang.ref.WeakReference
 
 /**
@@ -29,33 +34,100 @@ import java.lang.ref.WeakReference
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-class InstantDelegateImpl(callback: InstantDelegate.Callback): InstantDelegate {
+class InstantDelegateImpl: InstantDelegate {
 
-  private val refCallback = WeakReference(callback)
+  private var refCallback: WeakReference<InstantDelegate.Callback>? = null
 
-  private var cachedView: View? = null
+  private var rootView: View? = null
+  private var rootImpl: InstantView? = null
   private var viewInit = false
+  private var isReleaseComplete = false
 
-  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-    var contentView = this.cachedView
+  internal var isForceClean = false
 
-    if (contentView == null) {
-      contentView = refCallback.get()?.onCreateInstantView(inflater, container, savedInstanceState)
-      this.cachedView = contentView
-    }
-    return contentView
+  override fun attach(callback: InstantDelegate.Callback) {
+    refCallback = WeakReference(callback)
   }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
+  override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    val view = rootView
+    if (view != null) {
+      return view
+    }
+    viewInit = false
+    isReleaseComplete = false
+    return refCallback?.get()?.onCreateInstantView(inflater, container, savedInstanceState)?.also { rootView = it }
+  }
+
+  override fun onActivityCreated(host: Fragment, savedInstanceState: Bundle?, lifecycle: Lifecycle, owner: LifecycleOwner) {
+    val callback = refCallback?.get() ?: return
+    prepareClean(host)
+
     if (!viewInit) {
       viewInit = true
-      refCallback.get()?.onInitInstantView(savedInstanceState)
+      rootImpl = callback.onPrepareInstantViewImpl()?.also {
+        val view = rootView
+        if (view != null) {
+          it.attach(host)
+          it.onActivityCreated(view, lifecycle, owner)
+        }
+      }
+      callback.onInitInstantView(savedInstanceState)
+      InstantManager.add(this)
     }
+  }
+
+  override fun onResume() {
+    rootImpl?.onResume()
+  }
+
+  override fun onPause() {
+    rootImpl?.onPause()
+  }
+
+  override fun onDestroyView() {
+    rootImpl?.detach()
   }
 
   override fun onDestroy() {
+    rootView = null
     viewInit = false
-    cachedView = null
+
+    if (!isReleaseComplete) {
+      onReleaseInstantView()
+    }
   }
+
+  override fun isInstantCleanRequired(): Boolean {
+    return isForceClean || rootImpl?.isCleanRequired() == true
+  }
+
+  override fun onReleaseInstantView() {
+    rootImpl?.onDestroy()
+    rootImpl = null
+  }
+
+  /* Clean Observer */
+
+  private var cleanObserver: CleanObserver? = null
+
+  private fun prepareClean(host: Fragment) {
+    val activity = host.activity ?: return
+    this.cleanObserver?.let { activity.lifecycle.removeObserver(it) }
+    this.cleanObserver = CleanObserver(this).also {
+      activity.lifecycle.addObserver(it)
+    }
+  }
+
+  private class CleanObserver(impl: InstantDelegateImpl) : LifecycleObserver {
+    private val refImpl = WeakReference(impl)
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onDestroy() {
+      refImpl.get()?.isForceClean = true
+    }
+  }
+
+  /* Clean Observer :END */
 
 }

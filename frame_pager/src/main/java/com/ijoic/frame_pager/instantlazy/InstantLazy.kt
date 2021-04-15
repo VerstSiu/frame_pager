@@ -31,13 +31,30 @@ import com.ijoic.frame_pager.lazy.LazyDelegateLive
  */
 class InstantLazy(
     callback: Callback,
-    private val instant: InstantDelegate = InstantDelegateImpl(callback),
-    private val lazyLive: LazyDelegateLive = LazyDelegateImpl(callback)): InstantDelegate by instant, LazyDelegateLive by lazyLive {
+    private val instant: InstantDelegate = InstantDelegateImpl(),
+    private val lazyLive: LazyDelegateLive = LazyDelegateImpl(callback)
+): InstantDelegate by instant, LazyDelegateLive by lazyLive, LazyDelegate.CallbackSimple {
 
   /**
    * Instant lazy callback.
    */
   interface Callback: InstantDelegate.Callback, LazyDelegate.Callback
+
+  override fun onResume() {
+    lazyLive.onResume()
+  }
+
+  override fun onPause() {
+    lazyLive.onPause()
+  }
+
+  override fun onLazyResume() {
+    instant.onResume()
+  }
+
+  override fun onLazyPause() {
+    instant.onPause()
+  }
 
   override fun onDestroy() {
     instant.onDestroy()

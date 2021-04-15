@@ -21,6 +21,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 
 /**
  * Instant delegate.
@@ -28,7 +31,7 @@ import android.view.ViewGroup
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-interface InstantDelegate {
+interface InstantDelegate : InstantHost {
 
   /**
    * Delegate callback.
@@ -44,12 +47,26 @@ interface InstantDelegate {
     fun onCreateInstantView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View?
 
     /**
+     * Prepare instant view impl
+     *
+     * @since 1.1.2
+     */
+    fun onPrepareInstantViewImpl(): InstantView? = null
+
+    /**
      * Initialize instant view.
      *
      * @param savedInstanceState saved instance state.
      */
-    fun onInitInstantView(savedInstanceState: Bundle?)
+    fun onInitInstantView(savedInstanceState: Bundle?) {}
   }
+
+  /**
+   * Attach [callback]
+   *
+   * @since 1.1.2
+   */
+  fun attach(callback: Callback)
 
   /**
    * Create content view.
@@ -65,7 +82,33 @@ interface InstantDelegate {
    *
    * @param savedInstanceState saved instance state.
    */
-  fun onActivityCreated(savedInstanceState: Bundle?)
+  fun onActivityCreated(
+    host: Fragment,
+    savedInstanceState: Bundle?,
+    lifecycle: Lifecycle = host.lifecycle,
+    owner: LifecycleOwner = host.viewLifecycleOwner
+  )
+
+  /**
+   * Fragment resume
+   *
+   * @since 1.1.2
+   */
+  fun onResume()
+
+  /**
+   * Fragment pause
+   *
+   * @since 1.1.2
+   */
+  fun onPause()
+
+  /**
+   * Fragment destroy view
+   *
+   * @since 1.1.2
+   */
+  fun onDestroyView()
 
   /**
    * Destroy.

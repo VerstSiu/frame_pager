@@ -44,7 +44,8 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecy
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    delegate.onActivityCreated(savedInstanceState)
+    delegate.attach(this)
+    delegate.onActivityCreated(this, savedInstanceState, delegate.lazyOwner.lifecycle, delegate.lazyOwner)
     delegate.onCreate()
   }
 
@@ -58,11 +59,6 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecy
     super.onStop()
   }
 
-  override fun onDestroy() {
-    super.onDestroy()
-    delegate.onDestroy()
-  }
-
   override fun onResume() {
     super.onResume()
     delegate.onResume()
@@ -71,6 +67,24 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecy
   override fun onPause() {
     super.onPause()
     delegate.onPause()
+  }
+
+  override fun onLazyResume() {
+    delegate.onLazyResume()
+  }
+
+  override fun onLazyPause() {
+    delegate.onLazyPause()
+  }
+
+  override fun onDestroyView() {
+    super.onDestroyView()
+    delegate.onDestroyView()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    delegate.onDestroy()
   }
 
   override fun setUserVisibleHint(isVisibleToUser: Boolean) {
