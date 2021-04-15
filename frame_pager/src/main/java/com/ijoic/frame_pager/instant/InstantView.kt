@@ -65,8 +65,6 @@ abstract class InstantView {
    * 活动实例已创建回调
    */
   abstract fun onActivityCreated(view: View, lifecycle: Lifecycle, owner: LifecycleOwner)
-  open fun onResume() {}
-  open fun onPause() {}
 
   open fun onDestroy() {
     isActive = false

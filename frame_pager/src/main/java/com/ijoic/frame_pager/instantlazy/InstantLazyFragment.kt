@@ -70,14 +70,6 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecy
     delegate.onPause()
   }
 
-  override fun onLazyResume() {
-    delegate.onLazyResume()
-  }
-
-  override fun onLazyPause() {
-    delegate.onLazyPause()
-  }
-
   override fun onDestroyView() {
     super.onDestroyView()
     delegate.onDestroyView()

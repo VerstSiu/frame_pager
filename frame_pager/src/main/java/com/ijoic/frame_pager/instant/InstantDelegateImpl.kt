@@ -77,14 +77,6 @@ class InstantDelegateImpl: InstantDelegate {
     }
   }
 
-  override fun onResume() {
-    rootImpl?.onResume()
-  }
-
-  override fun onPause() {
-    rootImpl?.onPause()
-  }
-
   override fun onDestroyView() {
     rootImpl?.detach()
   }

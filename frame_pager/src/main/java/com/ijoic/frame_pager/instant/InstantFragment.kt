@@ -43,16 +43,6 @@ abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
     delegate.onActivityCreated(this, savedInstanceState)
   }
 
-  override fun onResume() {
-    super.onResume()
-    delegate.onResume()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    delegate.onPause()
-  }
-
   override fun onDestroyView() {
     super.onDestroyView()
     delegate.onDestroyView()
