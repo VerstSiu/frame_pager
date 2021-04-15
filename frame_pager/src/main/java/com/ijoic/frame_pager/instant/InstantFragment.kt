@@ -29,7 +29,7 @@ import androidx.fragment.app.Fragment
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-abstract class InstantFragment: Fragment(), InstantDelegate.Callback, InstantHost {
+abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
 
   private val delegate by lazy { InstantDelegateImpl() }
 
