@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2-alpha.4](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.3...1.1.2-alpha.4) (2021-04-15)
+
+
+### 代码重构
+
+* InstantHost 相关代码调整 ([16cd57b](https://github.com/VerstSiu/frame_pagercommit/16cd57b23e9a9b68d1986069414d45c30d824bd5))
+
 ### [1.1.2-alpha.3](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.2...1.1.2-alpha.3) (2021-04-15)
 
 
