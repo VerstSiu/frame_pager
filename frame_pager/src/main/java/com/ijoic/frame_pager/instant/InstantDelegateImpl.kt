@@ -99,10 +99,11 @@ class InstantDelegateImpl: InstantDelegate {
   }
 
   override fun isInstantCleanRequired(): Boolean {
-    return isForceClean || rootImpl?.isCleanRequired() == true
+    return !isReleaseComplete && (isForceClean || rootImpl?.isCleanRequired() == true)
   }
 
   override fun onReleaseInstantView() {
+    isReleaseComplete = true
     rootImpl?.onDestroy()
     rootImpl = null
   }
