@@ -29,9 +29,9 @@ import androidx.fragment.app.Fragment
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-abstract class InstantFragment(
-  private val delegate: InstantDelegate = InstantDelegateImpl()
-): Fragment(), InstantDelegate.Callback, InstantHost by delegate {
+abstract class InstantFragment: Fragment(), InstantDelegate.Callback, InstantHost {
+
+  private val delegate by lazy { InstantDelegateImpl() }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     return delegate.onCreateView(inflater, container, savedInstanceState)
@@ -60,6 +60,14 @@ abstract class InstantFragment(
   override fun onDestroy() {
     delegate.onDestroy()
     super.onDestroy()
+  }
+
+  override fun isInstantCleanRequired(): Boolean {
+    return delegate.isInstantCleanRequired()
+  }
+
+  override fun onReleaseInstantView() {
+    delegate.onReleaseInstantView()
   }
 
 }
