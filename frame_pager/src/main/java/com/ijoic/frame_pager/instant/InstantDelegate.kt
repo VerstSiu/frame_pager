@@ -90,20 +90,6 @@ interface InstantDelegate : InstantHost {
   )
 
   /**
-   * Fragment resume
-   *
-   * @since 1.1.2
-   */
-  fun onResume()
-
-  /**
-   * Fragment pause
-   *
-   * @since 1.1.2
-   */
-  fun onPause()
-
-  /**
    * Fragment destroy view
    *
    * @since 1.1.2
