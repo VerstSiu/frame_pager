@@ -88,6 +88,14 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecy
     delegate.onDestroy()
   }
 
+  override fun isInstantCleanRequired(): Boolean {
+    return delegate.isInstantCleanRequired()
+  }
+
+  override fun onReleaseInstantView() {
+    delegate.onReleaseInstantView()
+  }
+
   override fun setUserVisibleHint(isVisibleToUser: Boolean) {
     super.setUserVisibleHint(isVisibleToUser)
     delegate.setUserVisibleHint(isVisibleToUser)

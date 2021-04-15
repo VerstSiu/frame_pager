@@ -36,7 +36,7 @@ interface InstantDelegate : InstantHost {
   /**
    * Delegate callback.
    */
-  interface Callback {
+  interface Callback : InstantHost {
     /**
      * Create instant view.
      *
