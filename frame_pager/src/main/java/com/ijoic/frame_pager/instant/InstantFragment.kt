@@ -34,6 +34,7 @@ abstract class InstantFragment: Fragment(), InstantDelegate.Callback, InstantHos
   private val delegate by lazy { InstantDelegateImpl() }
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    delegate.attach(this)
     return delegate.onCreateView(inflater, container, savedInstanceState)
   }
 
