@@ -30,9 +30,8 @@ import com.ijoic.frame_pager.lazy.LazyDelegateLive
  * @version 1.0
  */
 class InstantLazy(
-    callback: Callback,
-    private val instant: InstantDelegate = InstantDelegateImpl(),
-    private val lazyLive: LazyDelegateLive = LazyDelegateImpl(callback)
+  private val instant: InstantDelegate = InstantDelegateImpl(),
+  private val lazyLive: LazyDelegateLive = LazyDelegateImpl()
 ): InstantDelegate by instant, LazyDelegateLive by lazyLive, LazyDelegate.CallbackSimple {
 
   /**

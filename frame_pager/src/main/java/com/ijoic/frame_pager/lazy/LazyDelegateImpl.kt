@@ -28,9 +28,9 @@ import java.lang.ref.WeakReference
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
+class LazyDelegateImpl: LazyDelegateLive {
 
-  private val refCallback = WeakReference(callback)
+  private var refCallback: WeakReference<LazyDelegate.Callback>? = null
   private val lifecycleOwner = WrapLifecycleOwner()
   private val lifecycle = lifecycleOwner.lifecycle
 
@@ -46,13 +46,17 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
   override val lazyOwner: LifecycleOwner
     get() = lifecycleOwner
 
+  override fun attachLazy(callback: LazyDelegate.Callback) {
+    refCallback = WeakReference(callback)
+  }
+
   override fun onCreate() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
   override fun onStart() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
   override fun onStop() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
   override fun onDestroy() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
 
   override fun onResume() {
-    val callback = refCallback.get() ?: return
+    val callback = refCallback?.get() ?: return
     lazyPauseInit = false
 
     if (callback.getUserVisibleHint() && !lazyResumeInit) {
@@ -62,7 +66,7 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
   }
 
   override fun onPause() {
-    val callback = refCallback.get() ?: return
+    val callback = refCallback?.get() ?: return
     lazyResumeInit = false
 
     if (callback.getUserVisibleHint() && !lazyPauseInit) {
@@ -72,7 +76,7 @@ class LazyDelegateImpl(callback: LazyDelegate.Callback): LazyDelegateLive {
   }
 
   override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-    val callback = refCallback.get() ?: return
+    val callback = refCallback?.get() ?: return
     if (!callback.isResumed()) {
       return
     }

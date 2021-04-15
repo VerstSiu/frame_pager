@@ -33,18 +33,19 @@ import com.ijoic.frame_pager.lazy.LazyLifecycleOwner
  */
 abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecycleOwner {
 
-  private val delegate by lazy { InstantLazy(this) }
+  private val delegate by lazy { InstantLazy() }
 
   override val lazyOwner: LifecycleOwner
     get() = delegate.lazyOwner
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    delegate.attach(this)
+    delegate.attachLazy(this)
     return delegate.onCreateView(inflater, container, savedInstanceState)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    delegate.attach(this)
     delegate.onActivityCreated(this, savedInstanceState, delegate.lazyOwner.lifecycle, delegate.lazyOwner)
     delegate.onCreate()
   }

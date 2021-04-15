@@ -57,6 +57,11 @@ interface LazyDelegate {
   }
 
   /**
+   * Attach lazy [callback]
+   */
+  fun attachLazy(callback: Callback)
+
+  /**
    * Resume.
    */
   fun onResume()
