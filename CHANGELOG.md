@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2-alpha.6](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.5...1.1.2-alpha.6) (2021-04-16)
+
+
+### 代码重构
+
+* instant lazy 实现方式调整 ([784f636](https://github.com/VerstSiu/frame_pagercommit/784f636fc8bccafeb61ad53d59bd12f4677f4da3))
+
 ### [1.1.2-alpha.5](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.4...1.1.2-alpha.5) (2021-04-15)
 
 
