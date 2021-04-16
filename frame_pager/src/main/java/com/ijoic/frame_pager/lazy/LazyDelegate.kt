@@ -17,17 +17,19 @@
  */
 package com.ijoic.frame_pager.lazy
 
+import androidx.lifecycle.Lifecycle
+
 /**
  * lazy delegate.
  *
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-interface LazyDelegate {
+interface LazyDelegate : LazyLifecycleOwner {
   /**
    * Lazy callback.
    */
-  interface Callback {
+  interface Callback : LazyLifecycleOwner {
     /**
      * Returns user visible status.
      */
@@ -50,19 +52,9 @@ interface LazyDelegate {
   }
 
   /**
-   * Attach lazy [callback]
+   * Attach [callback]
    */
-  fun attachLazy(callback: Callback)
-
-  /**
-   * Resume.
-   */
-  fun onResume()
-
-  /**
-   * Pause.
-   */
-  fun onPause()
+  fun attachOnCreate(callback: Callback, lifecycle: Lifecycle)
 
   /**
    * Set user visible hint.

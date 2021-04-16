@@ -29,40 +29,14 @@ import androidx.lifecycle.LifecycleOwner
  */
 abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LazyLifecycleOwner {
 
-  private val delegate by lazy { LazyDelegateImpl() }
+  private val delegate : LazyDelegate by lazy { LazyDelegateImpl() }
 
   override val lazyOwner: LifecycleOwner
     get() = delegate.lazyOwner
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
-    delegate.attachLazy(this)
-    delegate.onCreate()
-  }
-
-  override fun onStart() {
-    super.onStart()
-    delegate.onStart()
-  }
-
-  override fun onStop() {
-    delegate.onStop()
-    super.onStop()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    delegate.onResume()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    delegate.onPause()
-  }
-
-  override fun onDestroy() {
-    delegate.onDestroy()
-    super.onDestroy()
+    delegate.attachOnCreate(this, lifecycle)
   }
 
   override fun setUserVisibleHint(isVisibleToUser: Boolean) {

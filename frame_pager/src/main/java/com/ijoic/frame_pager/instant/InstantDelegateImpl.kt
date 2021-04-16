@@ -34,9 +34,10 @@ import java.lang.ref.WeakReference
  * @author verstsiu@126.com on 2018/4/19.
  * @version 1.0
  */
-class InstantDelegateImpl: InstantDelegate {
+class InstantDelegateImpl: InstantDelegate, LifecycleObserver {
 
   private var refCallback: WeakReference<InstantDelegate.Callback>? = null
+  private var refLifecycle: WeakReference<Lifecycle>? = null
 
   private var rootView: View? = null
   private var rootImpl: InstantView? = null
@@ -61,6 +62,8 @@ class InstantDelegateImpl: InstantDelegate {
 
   override fun onActivityCreated(host: Fragment, savedInstanceState: Bundle?, lifecycle: Lifecycle, owner: LifecycleOwner) {
     val callback = refCallback?.get() ?: return
+    refLifecycle = WeakReference(lifecycle)
+    lifecycle.addObserver(this)
     prepareClean(host)
 
     if (!viewInit) {
@@ -77,17 +80,28 @@ class InstantDelegateImpl: InstantDelegate {
     }
   }
 
-  override fun onDestroyView() {
-    rootImpl?.detach()
+  @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+  internal fun onResume() {
+    rootImpl?.onResume()
   }
 
-  override fun onDestroy() {
+  @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+  internal fun onPause() {
+    rootImpl?.onPause()
+  }
+
+  @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+  internal fun onDestroy() {
     rootView = null
     viewInit = false
 
     if (!isReleaseComplete) {
       onReleaseInstantView()
     }
+  }
+
+  override fun onDestroyView() {
+    rootImpl?.detach()
   }
 
   override fun isInstantCleanRequired(): Boolean {
@@ -98,6 +112,8 @@ class InstantDelegateImpl: InstantDelegate {
     isReleaseComplete = true
     rootImpl?.onDestroy()
     rootImpl = null
+    refLifecycle?.get()?.removeObserver(this)
+    refLifecycle = null
   }
 
   /* Clean Observer */

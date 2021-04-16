@@ -48,11 +48,6 @@ abstract class InstantFragment: Fragment(), InstantDelegate.Callback {
     delegate.onDestroyView()
   }
 
-  override fun onDestroy() {
-    delegate.onDestroy()
-    super.onDestroy()
-  }
-
   override fun isInstantCleanRequired(): Boolean {
     return delegate.isInstantCleanRequired()
   }
