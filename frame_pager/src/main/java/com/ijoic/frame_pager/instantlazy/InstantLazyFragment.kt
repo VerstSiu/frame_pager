@@ -23,7 +23,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
-import com.ijoic.frame_pager.lazy.LazyLifecycleOwner
 
 /**
  * Instant lazy fragment.
@@ -31,7 +30,7 @@ import com.ijoic.frame_pager.lazy.LazyLifecycleOwner
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecycleOwner {
+abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback {
 
   private val delegate by lazy { InstantLazy() }
 
@@ -40,44 +39,18 @@ abstract class InstantLazyFragment: Fragment(), InstantLazy.Callback, LazyLifecy
 
   override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
     delegate.attach(this)
-    delegate.attachLazy(this)
     return delegate.onCreateView(inflater, container, savedInstanceState)
   }
 
   override fun onActivityCreated(savedInstanceState: Bundle?) {
     super.onActivityCreated(savedInstanceState)
+    delegate.attachOnCreate(this, lifecycle)
     delegate.onActivityCreated(this, savedInstanceState, delegate.lazyOwner.lifecycle, delegate.lazyOwner)
-    delegate.onCreate()
-  }
-
-  override fun onStart() {
-    super.onStart()
-    delegate.onStart()
-  }
-
-  override fun onStop() {
-    delegate.onStop()
-    super.onStop()
-  }
-
-  override fun onResume() {
-    super.onResume()
-    delegate.onResume()
-  }
-
-  override fun onPause() {
-    super.onPause()
-    delegate.onPause()
   }
 
   override fun onDestroyView() {
     super.onDestroyView()
     delegate.onDestroyView()
-  }
-
-  override fun onDestroy() {
-    super.onDestroy()
-    delegate.onDestroy()
   }
 
   override fun isInstantCleanRequired(): Boolean {

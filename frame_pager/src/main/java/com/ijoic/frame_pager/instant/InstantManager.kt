@@ -60,7 +60,9 @@ object InstantManager {
       return false
     }
     if (host.isInstantCleanRequired()) {
-      host.onReleaseInstantView()
+      scope.launch(Dispatchers.Main) {
+        host.onReleaseInstantView()
+      }
       return false
     }
     return true

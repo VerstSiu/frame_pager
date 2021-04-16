@@ -21,7 +21,6 @@ import com.ijoic.frame_pager.instant.InstantDelegate
 import com.ijoic.frame_pager.instant.InstantDelegateImpl
 import com.ijoic.frame_pager.lazy.LazyDelegate
 import com.ijoic.frame_pager.lazy.LazyDelegateImpl
-import com.ijoic.frame_pager.lazy.LazyDelegateLive
 
 /**
  * Instant lazy.
@@ -29,19 +28,11 @@ import com.ijoic.frame_pager.lazy.LazyDelegateLive
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-class InstantLazy(
-  private val instant: InstantDelegate = InstantDelegateImpl(),
-  private val lazyLive: LazyDelegateLive = LazyDelegateImpl()
-): InstantDelegate by instant, LazyDelegateLive by lazyLive {
+class InstantLazy : InstantDelegate by InstantDelegateImpl(), LazyDelegate by LazyDelegateImpl() {
 
   /**
    * Instant lazy callback.
    */
   interface Callback: InstantDelegate.Callback, LazyDelegate.Callback
-
-  override fun onDestroy() {
-    instant.onDestroy()
-    lazyLive.onDestroy()
-  }
 
 }

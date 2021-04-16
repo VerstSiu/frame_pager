@@ -1,5 +1,7 @@
 package com.ijoic.frame_pager.instant
 
+import androidx.annotation.MainThread
+
 /**
  * Instant host
  *
@@ -15,5 +17,6 @@ interface InstantHost {
   /**
    * Release instant view
    */
+  @MainThread
   fun onReleaseInstantView()
 }

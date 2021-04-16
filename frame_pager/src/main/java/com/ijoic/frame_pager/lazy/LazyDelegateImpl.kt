@@ -17,9 +17,7 @@
  */
 package com.ijoic.frame_pager.lazy
 
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.*
 import java.lang.ref.WeakReference
 
 /**
@@ -28,34 +26,31 @@ import java.lang.ref.WeakReference
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-class LazyDelegateImpl: LazyDelegateLive {
+class LazyDelegateImpl: LazyDelegate, LifecycleObserver {
 
   private var refCallback: WeakReference<LazyDelegate.Callback>? = null
-  private val lifecycleOwner = WrapLifecycleOwner()
-  private val lifecycle = lifecycleOwner.lifecycle
 
-  private class WrapLifecycleOwner: LifecycleOwner {
-    private val registry = LifecycleRegistry(this)
-
-    override fun getLifecycle() = registry
-  }
+  private val internalOwner = WrapLifecycleOwner()
+  private val internalLifecycle = internalOwner.lifecycle
 
   private var lazyResumeInit = false
   private var lazyPauseInit = false
 
-  override val lazyOwner: LifecycleOwner
-    get() = lifecycleOwner
+  override val lazyOwner: LifecycleOwner = internalOwner
 
-  override fun attachLazy(callback: LazyDelegate.Callback) {
+  override fun attachOnCreate(callback: LazyDelegate.Callback, lifecycle: Lifecycle) {
     refCallback = WeakReference(callback)
+    lifecycle.addObserver(this)
+    internalLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
   }
 
-  override fun onCreate() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
-  override fun onStart() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
-  override fun onStop() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
-  override fun onDestroy() = lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+  @OnLifecycleEvent(Lifecycle.Event.ON_START)
+  internal fun onStart() {
+    internalLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_START)
+  }
 
-  override fun onResume() {
+  @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+  internal fun onResume() {
     val callback = refCallback?.get() ?: return
     lazyPauseInit = false
 
@@ -65,7 +60,8 @@ class LazyDelegateImpl: LazyDelegateLive {
     }
   }
 
-  override fun onPause() {
+  @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+  internal fun onPause() {
     val callback = refCallback?.get() ?: return
     lazyResumeInit = false
 
@@ -73,6 +69,16 @@ class LazyDelegateImpl: LazyDelegateLive {
       lazyPauseInit = true
       performLazyPause(callback)
     }
+  }
+
+  @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+  internal fun onStop() {
+    internalLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_STOP)
+  }
+
+  @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+  internal fun onDestroy() {
+    internalLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
   }
 
   override fun setUserVisibleHint(isVisibleToUser: Boolean) {
@@ -100,12 +106,18 @@ class LazyDelegateImpl: LazyDelegateLive {
 
   private fun performLazyResume(callback: LazyDelegate.Callback) {
     callback.onLazyResume()
-    lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    internalLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_RESUME)
   }
 
   private fun performLazyPause(callback: LazyDelegate.Callback) {
-    lifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    internalLifecycle.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     callback.onLazyPause()
+  }
+
+  private class WrapLifecycleOwner: LifecycleOwner {
+    private val registry = LifecycleRegistry(this)
+
+    override fun getLifecycle() = registry
   }
 
 }

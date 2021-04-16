@@ -95,9 +95,4 @@ interface InstantDelegate : InstantHost {
    * @since 1.1.2
    */
   fun onDestroyView()
-
-  /**
-   * Destroy.
-   */
-  fun onDestroy()
 }
