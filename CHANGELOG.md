@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2-alpha.8](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.7...1.1.2-alpha.8) (2021-04-17)
+
+
+### 代码重构
+
+* 回收处理相关代码调整 ([183a06a](https://github.com/VerstSiu/frame_pagercommit/183a06a32d289b11362fb18707909a20d8e52ae0))
+
 ### [1.1.2-alpha.7](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.6...1.1.2-alpha.7) (2021-04-17)
 
 
