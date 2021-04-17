@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2-alpha.7](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.6...1.1.2-alpha.7) (2021-04-17)
+
+
+### 代码重构
+
+* 活动销毁的时候，立即执行回收一次 InstantView ([f4af371](https://github.com/VerstSiu/frame_pagercommit/f4af37110b50c8e671f5c9f6a085416d662d7a70))
+
 ### [1.1.2-alpha.6](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.5...1.1.2-alpha.6) (2021-04-16)
 
 
