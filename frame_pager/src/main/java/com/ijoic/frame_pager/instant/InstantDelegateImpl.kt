@@ -109,9 +109,8 @@ class InstantDelegateImpl: InstantDelegate, LifecycleObserver {
   }
 
   override fun onReleaseInstantView() {
+    rootView = null
     isReleaseComplete = true
-    refCallback?.get()?.onReleaseInstantView()
-    refCallback = null
     rootImpl?.onDestroy()
     rootImpl = null
     refLifecycle?.get()?.removeObserver(this)
@@ -130,13 +129,18 @@ class InstantDelegateImpl: InstantDelegate, LifecycleObserver {
     }
   }
 
+  private fun performClean() {
+    refCallback?.get()?.onReleaseInstantView() // 触发 Fragment 的回收事件；Fragment 回收时会调用 delegate 的回收方法
+    refCallback = null
+  }
+
   private class CleanObserver(impl: InstantDelegateImpl) : LifecycleObserver {
     private val refImpl = WeakReference(impl)
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
       refImpl.get()?.also {
-        it.onDestroy()
+        it.performClean()
         it.isForceClean = true
       }
     }
