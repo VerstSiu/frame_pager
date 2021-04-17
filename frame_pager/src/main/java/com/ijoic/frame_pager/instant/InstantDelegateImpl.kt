@@ -110,6 +110,8 @@ class InstantDelegateImpl: InstantDelegate, LifecycleObserver {
 
   override fun onReleaseInstantView() {
     isReleaseComplete = true
+    refCallback?.get()?.onReleaseInstantView()
+    refCallback = null
     rootImpl?.onDestroy()
     rootImpl = null
     refLifecycle?.get()?.removeObserver(this)
@@ -133,7 +135,10 @@ class InstantDelegateImpl: InstantDelegate, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
-      refImpl.get()?.isForceClean = true
+      refImpl.get()?.also {
+        it.onDestroy()
+        it.isForceClean = true
+      }
     }
   }
 
