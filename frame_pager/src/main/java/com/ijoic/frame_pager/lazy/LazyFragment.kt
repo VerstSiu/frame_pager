@@ -27,7 +27,7 @@ import androidx.lifecycle.LifecycleOwner
  * @author verstsiu@126.com on 2018/4/20.
  * @version 1.0
  */
-abstract class LazyFragment: Fragment(), LazyDelegate.Callback, LazyLifecycleOwner {
+abstract class LazyFragment: Fragment(), LazyDelegate.Callback {
 
   private val delegate : LazyDelegate by lazy { LazyDelegateImpl() }
 
