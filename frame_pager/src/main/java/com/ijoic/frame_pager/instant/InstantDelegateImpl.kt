@@ -69,14 +69,15 @@ class InstantDelegateImpl: InstantDelegate, LifecycleObserver {
     if (!viewInit) {
       viewInit = true
       callback.onInitInstantView(savedInstanceState)
-      rootImpl = callback.onPrepareInstantViewImpl()?.also {
-        val view = rootView
-        if (view != null) {
-          it.attach(host)
-          it.onActivityCreated(view, lifecycle, owner)
-        }
-      }
+      rootImpl = callback.onPrepareInstantViewImpl()
       InstantManager.add(this)
+    }
+    rootImpl?.also {
+      val view = rootView
+      if (view != null) {
+        it.attach(host)
+        it.performActivityCreated(view, lifecycle, owner)
+      }
     }
   }
 
