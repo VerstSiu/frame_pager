@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2-alpha.9](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.8...1.1.2-alpha.9) (2021-05-07)
+
+
+### 新功能
+
+* 增加 InstantView.performActivityCreated 方法支持 ([e55fd90](https://github.com/VerstSiu/frame_pagercommit/e55fd909c3199ee0a9346f9abe1af665f5c0dd07))
+
 ### [1.1.2-alpha.8](https://github.com/VerstSiu/frame_pagercompare/1.1.2-alpha.7...1.1.2-alpha.8) (2021-04-17)
 
 
