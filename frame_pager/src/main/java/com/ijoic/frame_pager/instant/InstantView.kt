@@ -20,6 +20,8 @@ abstract class InstantView {
   private var isActive = false
   private var inactiveMs = 0L
 
+  private var isViewPrepared = false
+
   /**
    * Keep always if possible(ignore keepMs)
    */
@@ -62,9 +64,19 @@ abstract class InstantView {
   }
 
   /**
+   * 这里同步 Fragment.onActivityCreated，然后仅首次调用的时候执行一次 [onActivityCreated] 方法
+   */
+  open fun performActivityCreated(view: View, lifecycle: Lifecycle, owner: LifecycleOwner) {
+    if (!isViewPrepared) {
+      isViewPrepared = true
+      onActivityCreated(view, lifecycle, owner)
+    }
+  }
+
+  /**
    * 活动实例已创建回调
    */
-  abstract fun onActivityCreated(view: View, lifecycle: Lifecycle, owner: LifecycleOwner)
+  protected abstract fun onActivityCreated(view: View, lifecycle: Lifecycle, owner: LifecycleOwner)
   open fun onResume() {}
   open fun onPause() {}
 
